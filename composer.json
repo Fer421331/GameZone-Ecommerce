@@ -1,0 +1,13 @@
+{
+    "autoload": {
+        "psr-4": {
+            "": "src/"
+        }
+    },
+    "scripts": {
+        "build:css": "@php compile_less.php"
+    },
+    "require": {
+        "wikimedia/less.php": "^5.5"
+    }
+}
