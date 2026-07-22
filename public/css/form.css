@@ -10,7 +10,7 @@ input{
 
 input.width-full{
   width:100%;
-}
+} 
 
 button{
   background-color: var(--primary_bg300);

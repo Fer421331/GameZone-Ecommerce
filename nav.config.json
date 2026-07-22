@@ -3,24 +3,24 @@
     {
       "id": "Menu_SignIn",
       "nav_url": "index.php?page=Sec_Login",
-      "nav_label":"<i class=\"fas fa-sign-in-alt\"></i>&nbsp;Iniciar Sesión"
+      "nav_label": "<i class=\"fas fa-sign-in-alt\"></i>&nbsp;Iniciar Sesión"
     },
     {
       "id": "Menu_SignUp",
       "nav_url": "index.php?page=Sec_Register",
-      "nav_label":"<i class=\"fas fa-sign-in-alt\"></i>&nbsp;Crear Cuenta"
+      "nav_label": "<i class=\"fas fa-user-plus\"></i>&nbsp;Crear Cuenta"
     }
   ],
   "private": [
     {
-      "id":"Menu_PaymentCheckout",
-      "nav_url": "index.php?page=Checkout_Checkout",
-      "nav_label": "Carretilla de Compra"
+      "id": "Menu_Dashboard",
+      "nav_url": "index.php?page=Dashboard_Dashboard",
+      "nav_label": "Dashboard"
     },
     {
-      "id":"Menu_RutasEntrega",
-      "nav_url":"index.php?page=RutasEntrega_RutasEntrega",
-      "nav_label":"Rutas de Entrega"
+      "id": "Menu_Categorias",
+      "nav_url": "index.php?page=Categorias_Categorias",
+      "nav_label": "Categorías"
     }
   ]
 }

@@ -1328,26 +1328,26 @@ a.w32 {
     height: 2rem
 }
 
-table a.btn{
-    display:inline-flex;
-    justify-content:center;
-    align-items:center;
+table a.btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
 
-    min-width:200;
-    min-height:2rem;
+    min-width: 200;
+    min-height: 2rem;
 
-    width:auto;
-    height:auto;
+    width: auto;
+    height: auto;
 
-    padding:.45rem .85rem;
+    padding: .45rem .85rem;
 
-    border-radius:.85rem;
-    border:1px solid rgba(43,33,29,.1);
-    background:rgba(164,120,100,.12);
-    color:#2b211d;
-    text-decoration:none;  
-    cursor:pointer;
-}    
+    border-radius: .85rem;
+    border: 1px solid rgba(43, 33, 29, .1);
+    background: rgba(164, 120, 100, .12);
+    color: #2b211d;
+    text-decoration: none;
+    cursor: pointer;
+}
 
 table a.btn:hover {
     background-color: rgba(164, 120, 100, 0.22)

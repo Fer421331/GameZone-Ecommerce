@@ -5,57 +5,111 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{SITE_TITLE}}</title>
+
+  <link rel="icon" type="image/jpeg" href="{{BASE_DIR}}/public/imgs/hero/logo.jpg">
+
   <link rel="preconnect" href="https://fonts.gstatic.com">
+
   <link
-    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="{{BASE_DIR}}/public/css/appstyle.css" />
+
+  <link rel="stylesheet" href="{{BASE_DIR}}/public/css/gamezone.css">
+
   <script src="https://kit.fontawesome.com/{{FONT_AWESOME_KIT}}.js" crossorigin="anonymous"></script>
+
   {{foreach SiteLinks}}
-  <link rel="stylesheet" href="{{~BASE_DIR}}/{{this}}" />
+  <link rel="stylesheet" href="{{~BASE_DIR}}/{{this}}">
   {{endfor SiteLinks}}
+
   {{foreach BeginScripts}}
   <script src="{{~BASE_DIR}}/{{this}}"></script>
   {{endfor BeginScripts}}
+
 </head>
 
 <body class="app-shell private-shell">
+
   <header class="site-header">
-    <input type="checkbox" class="menu_toggle" id="menu_toggle" />
-    <label for="menu_toggle" class="menu_toggle_icon">
-      <div class="hmb dgn pt-1"></div>
-      <div class="hmb hrz"></div>
-      <div class="hmb dgn pt-2"></div>
-    </label>
+
+
     <div class="brand-lockup">
-      <h1>{{SITE_TITLE}}</h1>
-      <p class="brand-caption">Centro de operaciones</p>
+      <h1>🎮 GameZone</h1>
+      <p class="brand-caption">Panel Administrativo</p>
     </div>
+
     <nav id="menu" class="site-nav">
+
       <ul class="site-nav-list">
-        <li><a href="index.php?page={{PRIVATE_DEFAULT_CONTROLLER}}"><i class="fas fa-home"></i>&nbsp;Inicio</a></li>
+
+        <li>
+          <a href="index.php?page={{PRIVATE_DEFAULT_CONTROLLER}}">
+            <i class="fas fa-home"></i>
+            &nbsp;Inicio
+          </a>
+        </li>
+
         {{foreach NAVIGATION}}
-        <li><a href="{{nav_url}}">{{nav_label}}</a></li>
+
+        <li>
+          <a href="{{nav_url}}">
+            {{nav_label}}
+          </a>
+        </li>
+
         {{endfor NAVIGATION}}
-        <li><a href="index.php?page=sec_logout"><i class="fas fa-sign-out-alt"></i>&nbsp;Salir</a></li>
+
+        <li>
+          <a href="index.php?page=sec_logout">
+            <i class="fas fa-sign-out-alt"></i>
+            &nbsp;Salir
+          </a>
+        </li>
+
       </ul>
+
     </nav>
+
     {{with login}}
-    <span class="username">{{userName}} <a href="index.php?page=sec_logout"><i
-          class="fas fa-sign-out-alt"></i></a></span>
-    {{endwith login}}
-  </header>
-  <main class="site-main" >
-    <div class="page-shell">
-      {{{page_content}}} 
+
+    <div class="username">
+
+      <i class="fas fa-user-circle"></i>
+
+      <span>{{userName}}</span>
+
     </div>
+
+    {{endwith login}}
+
+  </header>
+
+  <main class="site-main">
+
+    <div class="page-shell">
+
+      {{{page_content}}}
+
+    </div>
+
   </main>
-<footer class="site-footer">
-    <div class="page-shell footer-shell">Todos los Derechos Reservados {{~CURRENT_YEAR}} &copy;</div>
+
+  <footer class="site-footer">
+
+    <div class="page-shell footer-shell">
+
+      © {{~CURRENT_YEAR}} GameZone | Todos los Derechos Reservados
+
+    </div>
+
   </footer>
+
   {{foreach EndScripts}}
+
   <script src="{{~BASE_DIR}}/{{this}}"></script>
+
   {{endfor EndScripts}}
+
 </body>
 
-</html>  
+</html>
