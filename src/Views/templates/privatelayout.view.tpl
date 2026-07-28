@@ -35,7 +35,7 @@
 
     <div class="brand-lockup">
       <h1>🎮 GameZone</h1>
-      <p class="brand-caption">Panel Administrativo</p>
+      <p class="brand-caption">{{PANEL_CAPTION}}</p>
     </div>
 
     <nav id="menu" class="site-nav">

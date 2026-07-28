@@ -13,14 +13,9 @@
   ],
   "private": [
     {
-      "id": "Menu_Dashboard",
-      "nav_url": "index.php?page=Dashboard_Dashboard",
-      "nav_label": "Dashboard"
-    },
-    {
-      "id": "Menu_Categorias",
-      "nav_url": "index.php?page=Categorias_Categorias",
-      "nav_label": "Categorías"
+        "id": "Menu_Admin",
+        "nav_url": "index.php?page=Menu_Menu",
+        "nav_label": "Menú Administrativo"
     }
   ]
 }

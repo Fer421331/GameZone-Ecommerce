@@ -13,21 +13,51 @@ class Nav
             Context::setContext("PUBLIC_NAVIGATION", $navigationData, $saveToSession);
         }
     }
+
     public static function setNavContext()
     {
-        $tmpNAVIGATION = Context::getContextByKey("NAVIGATION");
-        if ($tmpNAVIGATION === "") {
-            $tmpNAVIGATION = [];
-            $userID = Security::getUserId();
-            $navigationData = self::getNavFromJson()["private"];
-            foreach ($navigationData as $navEntry) {
-                if (Security::isAuthorized($userID, $navEntry["id"], 'MNU')) {
+        $tmpNAVIGATION = [];
+        $userID = Security::getUserId();
+
+        if ($userID) {
+            $roles = \Dao\Security\Security::getRolesByUsuario($userID);
+
+            $esAdminOAuditor = false;
+            $esVentas = false;
+            $esInvitado = true;
+
+            foreach ($roles as $rol) {
+                $codigoRol = $rol["rolescod"];
+                // 1: Admin, 4: Auditor
+                if ($codigoRol == '1' || $codigoRol == '4') {
+                    $esAdminOAuditor = true;
+                    $esInvitado = false;
+                }
+                // 2: Ventas
+                if ($codigoRol == '2') {
+                    $esVentas = true;
+                    $esInvitado = false;
+                }
+            }
+
+            if (!$esInvitado) {
+                $navigationData = self::getNavFromJson()["private"];
+
+                foreach ($navigationData as $navEntry) {
+
+                    if ($esVentas) {
+                        $navEntry["nav_label"] = "Menú Ventas";
+                    } else {
+                        $navEntry["nav_label"] = "Menú Administrativo";
+                    }
+
                     $tmpNAVIGATION[] = $navEntry;
                 }
             }
-            $saveToSession = intval(Context::getContextByKey("DEVELOPMENT")) !== 1;
-            Context::setContext("NAVIGATION", $tmpNAVIGATION, $saveToSession);
         }
+
+        $saveToSession = intval(Context::getContextByKey("DEVELOPMENT")) !== 1;
+        Context::setContext("NAVIGATION", $tmpNAVIGATION, $saveToSession);
     }
 
     public static function invalidateNavData()
@@ -56,10 +86,6 @@ class Nav
         return $jsonData;
     }
 
-    private function __construct()
-    {
-    }
-    private function __clone()
-    {
-    }
+    private function __construct() {}
+    private function __clone() {}
 }

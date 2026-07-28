@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PHP Version 7.2
  *
@@ -9,6 +10,7 @@
  * @version  CVS:1.0.0
  * @link     http://
  */
+
 namespace Controllers;
 
 /**
@@ -29,17 +31,17 @@ abstract class PrivateController extends PublicController
             $this->name,
             'CTR'
         );
-        if (!$isAuthorized){
+        if (!$isAuthorized) {
             throw new PrivateNoAuthException();
         }
     }
     private function _isAuthenticated()
     {
-        if (!\Utilities\Security::isLogged()){
+        if (!\Utilities\Security::isLogged()) {
             throw new PrivateNoLoggedException();
         }
     }
-    protected function isFeatureAutorized($feature) :bool
+    protected function isFeatureAutorized($feature): bool
     {
         return \Utilities\Security::isAuthorized(
             \Utilities\Security::getUserId(),
@@ -52,5 +54,26 @@ abstract class PrivateController extends PublicController
         $this->_isAuthenticated();
         $this->_isAuthorized();
 
+        $userId = \Utilities\Security::getUserId();
+        if ($userId) {
+            $roles = \Dao\Security\Security::getRolesByUsuario($userId);
+
+            $caption = "Tu tienda de videojuegos";
+
+            foreach ($roles as $rol) {
+                $codigoRol = $rol["rolescod"];
+
+                if ($codigoRol == '1' || $codigoRol == '4') {
+                    $caption = "Panel administrativo";
+                    break;
+                }
+
+                if ($codigoRol == '2') {
+                    $caption = "Panel de ventas";
+                }
+            }
+
+            \Utilities\Context::setContext("PANEL_CAPTION", $caption);
+        }
     }
 }
