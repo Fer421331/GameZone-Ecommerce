@@ -1,0 +1,321 @@
+<?php
+
+namespace Dao\Productos;
+
+use Dao\Table;
+
+class Productos extends Table
+{
+    public static function getProductos(): array
+    {
+        $sql = "
+            SELECT
+                p.producto_id,
+                p.producto_sku,
+                p.producto_nombre,
+                p.producto_costo,
+                p.producto_precio,
+                p.producto_stock,
+                p.producto_activo_web,
+                p.producto_estado,
+                c.categoria_nombre,
+                m.marca_nombre,
+                COALESCE(pl.plataforma_nombre, 'Sin plataforma') AS plataforma_nombre
+            FROM productos p
+            INNER JOIN categorias c
+                ON p.categoria_id = c.categoria_id
+            INNER JOIN marcas m
+                ON p.marca_id = m.marca_id
+            LEFT JOIN plataformas pl
+                ON p.plataforma_id = pl.plataforma_id
+            ORDER BY p.producto_id DESC;
+        ";
+
+        return self::obtenerRegistros($sql, []);
+    }
+
+    public static function getProductoById(int $productoId): ?array
+    {
+        $sql = "
+            SELECT
+                producto_id,
+                categoria_id,
+                marca_id,
+                plataforma_id,
+                producto_sku,
+                producto_nombre,
+                producto_descripcion,
+                producto_costo,
+                producto_precio,
+                producto_stock,
+                producto_activo_web,
+                producto_estado
+            FROM productos
+            WHERE producto_id = :producto_id;
+        ";
+
+        $producto = self::obtenerUnRegistro(
+            $sql,
+            [
+                "producto_id" => $productoId
+            ]
+        );
+
+        return $producto ?: null;
+    }
+
+    public static function getCategoriasActivas(): array
+    {
+        $sql = "
+            SELECT
+                categoria_id,
+                categoria_nombre
+            FROM categorias
+            WHERE categoria_estado = 'ACT'
+            ORDER BY categoria_nombre;
+        ";
+
+        return self::obtenerRegistros($sql, []);
+    }
+
+    public static function getMarcasActivas(): array
+    {
+        $sql = "
+            SELECT
+                marca_id,
+                marca_nombre
+            FROM marcas
+            WHERE marca_estado = 'ACT'
+            ORDER BY marca_nombre;
+        ";
+
+        return self::obtenerRegistros($sql, []);
+    }
+
+    public static function getPlataformasActivas(): array
+    {
+        $sql = "
+            SELECT
+                plataforma_id,
+                plataforma_nombre
+            FROM plataformas
+            WHERE plataforma_estado = 'ACT'
+            ORDER BY plataforma_nombre;
+        ";
+
+        return self::obtenerRegistros($sql, []);
+    }
+
+    public static function insertProducto(
+        int $categoriaId,
+        int $marcaId,
+        ?int $plataformaId,
+        string $sku,
+        string $nombre,
+        string $descripcion,
+        float $costo,
+        float $precio,
+        int $stock,
+        string $activoWeb,
+        string $estado
+    ): bool {
+        $sql = "
+            INSERT INTO productos
+            (
+                categoria_id,
+                marca_id,
+                plataforma_id,
+                producto_sku,
+                producto_nombre,
+                producto_descripcion,
+                producto_costo,
+                producto_precio,
+                producto_stock,
+                producto_activo_web,
+                producto_estado,
+                producto_fecha_publicacion
+            )
+            VALUES
+            (
+                :categoria_id,
+                :marca_id,
+                :plataforma_id,
+                :producto_sku,
+                :producto_nombre,
+                :producto_descripcion,
+                :producto_costo,
+                :producto_precio,
+                :producto_stock,
+                :producto_activo_web,
+                :producto_estado,
+                CURRENT_TIMESTAMP
+            );
+        ";
+
+        return self::executeNonQuery(
+            $sql,
+            [
+                "categoria_id" => $categoriaId,
+                "marca_id" => $marcaId,
+                "plataforma_id" => $plataformaId,
+                "producto_sku" => $sku,
+                "producto_nombre" => $nombre,
+                "producto_descripcion" => $descripcion,
+                "producto_costo" => $costo,
+                "producto_precio" => $precio,
+                "producto_stock" => $stock,
+                "producto_activo_web" => $activoWeb,
+                "producto_estado" => $estado
+            ]
+        ) > 0;
+    }
+
+    public static function updateProducto(
+        int $productoId,
+        int $categoriaId,
+        int $marcaId,
+        ?int $plataformaId,
+        string $sku,
+        string $nombre,
+        string $descripcion,
+        float $costo,
+        float $precio,
+        int $stock,
+        string $activoWeb,
+        string $estado
+    ): bool {
+        $sql = "
+            UPDATE productos
+            SET
+                categoria_id = :categoria_id,
+                marca_id = :marca_id,
+                plataforma_id = :plataforma_id,
+                producto_sku = :producto_sku,
+                producto_nombre = :producto_nombre,
+                producto_descripcion = :producto_descripcion,
+                producto_costo = :producto_costo,
+                producto_precio = :producto_precio,
+                producto_stock = :producto_stock,
+                producto_activo_web = :producto_activo_web,
+                producto_estado = :producto_estado,
+                producto_fecha_actualizacion = CURRENT_TIMESTAMP
+            WHERE producto_id = :producto_id;
+        ";
+
+        return self::executeNonQuery(
+            $sql,
+            [
+                "producto_id" => $productoId,
+                "categoria_id" => $categoriaId,
+                "marca_id" => $marcaId,
+                "plataforma_id" => $plataformaId,
+                "producto_sku" => $sku,
+                "producto_nombre" => $nombre,
+                "producto_descripcion" => $descripcion,
+                "producto_costo" => $costo,
+                "producto_precio" => $precio,
+                "producto_stock" => $stock,
+                "producto_activo_web" => $activoWeb,
+                "producto_estado" => $estado
+            ]
+        ) > 0;
+    }
+
+    public static function deleteProducto(int $productoId): bool
+    {
+        $sql = "
+            UPDATE productos
+            SET
+                producto_estado = 'INA',
+                producto_activo_web = 'INA',
+                producto_fecha_actualizacion = CURRENT_TIMESTAMP
+            WHERE producto_id = :producto_id;
+        ";
+
+        return self::executeNonQuery(
+            $sql,
+            [
+                "producto_id" => $productoId
+            ]
+        ) > 0;
+    }
+
+    public static function existeSku(
+        string $sku,
+        int $productoId = 0
+    ): bool {
+        $sql = "
+            SELECT COUNT(*) AS total
+            FROM productos
+            WHERE LOWER(producto_sku) = LOWER(:producto_sku)
+              AND producto_id <> :producto_id;
+        ";
+
+        $resultado = self::obtenerUnRegistro(
+            $sql,
+            [
+                "producto_sku" => $sku,
+                "producto_id" => $productoId
+            ]
+        );
+
+        return intval($resultado["total"] ?? 0) > 0;
+    }
+
+    public static function categoriaExiste(int $categoriaId): bool
+    {
+        $sql = "
+            SELECT COUNT(*) AS total
+            FROM categorias
+            WHERE categoria_id = :categoria_id
+              AND categoria_estado = 'ACT';
+        ";
+
+        $resultado = self::obtenerUnRegistro(
+            $sql,
+            [
+                "categoria_id" => $categoriaId
+            ]
+        );
+
+        return intval($resultado["total"] ?? 0) > 0;
+    }
+
+    public static function marcaExiste(int $marcaId): bool
+    {
+        $sql = "
+            SELECT COUNT(*) AS total
+            FROM marcas
+            WHERE marca_id = :marca_id
+              AND marca_estado = 'ACT';
+        ";
+
+        $resultado = self::obtenerUnRegistro(
+            $sql,
+            [
+                "marca_id" => $marcaId
+            ]
+        );
+
+        return intval($resultado["total"] ?? 0) > 0;
+    }
+
+    public static function plataformaExiste(int $plataformaId): bool
+    {
+        $sql = "
+            SELECT COUNT(*) AS total
+            FROM plataformas
+            WHERE plataforma_id = :plataforma_id
+              AND plataforma_estado = 'ACT';
+        ";
+
+        $resultado = self::obtenerUnRegistro(
+            $sql,
+            [
+                "plataforma_id" => $plataformaId
+            ]
+        );
+
+        return intval($resultado["total"] ?? 0) > 0;
+    }
+}
