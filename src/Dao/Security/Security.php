@@ -403,9 +403,136 @@ class Security extends \Dao\Table
             ]
         );
     }
+
+    public static function getFunciones($partialName, $status, $orderBy, $desc, $page, $itemsPerPage)
+    {
+        $sql = "SELECT fncod, fndsc, fnest, fntyp FROM funciones";
+        $count = "SELECT COUNT(*) as total FROM funciones";
+
+        $where = [];
+        $params = [];
+
+
+        if ($partialName !== "") {
+
+            $where[] = "fndsc LIKE :name";
+            $params["name"] = "%$partialName%";
+        }
+
+
+        if ($status !== "") {
+
+            $where[] = "fnest = :status";
+            $params["status"] = $status;
+        }
+
+
+        if ($where) {
+
+            $sql .= " WHERE " . implode(" AND ", $where);
+            $count .= " WHERE " . implode(" AND ", $where);
+        }
+
+
+        if (in_array($orderBy, ["fncod", "fndsc", "fntyp"])) {
+
+            $sql .= " ORDER BY $orderBy " . ($desc ? "DESC" : "");
+        }
+
+
+        $total =
+            self::obtenerUnRegistro(
+                $count,
+                $params
+            )["total"];
+
+
+        $sql .= " LIMIT " .
+            ($page * $itemsPerPage) .
+            ", $itemsPerPage";
+
+
+        return [
+            "funciones" => self::obtenerRegistros($sql, $params),
+            "total" => $total
+        ];
+    }
+
+
+
+    public static function getFuncionById($id)
+    {
+        return self::obtenerUnRegistro(
+            "SELECT *
+         FROM funciones
+         WHERE fncod = :id",
+            [
+                "id" => $id
+            ]
+        );
+    }
+
+
+
+    public static function insertFuncion($cod, $dsc, $est, $typ)
+    {
+        return self::executeNonQuery(
+            "INSERT INTO funciones
+        (
+            fncod,
+            fndsc,
+            fnest,
+            fntyp
+        )
+        VALUES
+        (
+            :cod,
+            :dsc,
+            :est,
+            :typ
+        )",
+            [
+                "cod" => $cod,
+                "dsc" => $dsc,
+                "est" => $est,
+                "typ" => $typ
+            ]
+        );
+    }
+
+
+
+    public static function updateFuncion($cod, $dsc, $est, $typ)
+    {
+        return self::executeNonQuery(
+            "UPDATE funciones
+         SET
+            fndsc = :dsc,
+            fnest = :est,
+            fntyp = :typ
+         WHERE fncod = :cod",
+            [
+                "cod" => $cod,
+                "dsc" => $dsc,
+                "est" => $est,
+                "typ" => $typ
+            ]
+        );
+    }
+
+
+
+    public static function deleteFuncion($cod)
+    {
+        return self::executeNonQuery(
+            "DELETE FROM funciones
+         WHERE fncod = :cod",
+            [
+                "cod" => $cod
+            ]
+        );
+    }
+
     private function __construct() {}
     private function __clone() {}
 }
-
-
- 

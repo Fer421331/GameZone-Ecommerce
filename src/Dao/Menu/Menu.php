@@ -47,6 +47,11 @@ class Menu extends Table
             [
                 "titulo" => "Funciones",
                 "descripcion" => "Administrar funciones",
+                "url" => "index.php?page=Security_Funciones"
+            ],
+            [
+                "titulo" => "Funciones por Roles",
+                "descripcion" => "Administrar funciones por roles",
                 "url" => "index.php?page=Security_FuncionesRoles"
             ],
             [

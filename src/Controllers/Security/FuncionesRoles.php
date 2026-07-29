@@ -8,15 +8,15 @@ use Dao\Security\Security as SecurityDAO;
 
 class FuncionesRoles extends PrivateController
 {
+    private $viewData = [];
+
     public function run(): void
     {
-        $viewData = [];
-
-        $viewData["roles"] = SecurityDAO::getRoles();
+        $this->viewData["roles"] = SecurityDAO::getRoles();
 
         Renderer::render(
             "security/funcionesroles",
-            $viewData
+            $this->viewData
         );
     }
 }

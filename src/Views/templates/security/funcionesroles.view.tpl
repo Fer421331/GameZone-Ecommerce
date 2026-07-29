@@ -1,34 +1,54 @@
-<h1>Roles del Sistema</h1>
+<h1>Asignar Funciones a Roles</h1>
 
-<table>
+<section class="WWList">
 
-    <tr>
-        <th>Código</th>
-        <th>Descripción</th>
-        <th>Estado</th>
-        <th>Acción</th>
-    </tr>
+    <table>
 
-    {{foreach roles}}
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Rol</th>
+                <th>Estado</th>
+                <th></th>
+            </tr>
+        </thead>
 
-    <tr>
+        <tbody>
 
-        <td>{{rolescod}}</td>
+            {{foreach roles}}
 
-        <td>{{rolesdsc}}</td>
+            <tr>
 
-        <td>{{rolesest}}</td>
+                <td>
+                    {{rolescod}}
+                </td>
 
-        <td>
+                <td>
+                    {{rolesdsc}}
+                </td>
 
-            <a href="index.php?page=Security_FuncionRol&rolescod={{rolescod}}">
-                Administrar Funciones
-            </a>
+                <td>
+                    {{rolesest}}
+                </td>
 
-        </td>
+                <td>
+                    <a href="index.php?page=Security_FuncionRol&rolescod={{rolescod}}">
+                        Administrar funciones
+                    </a>
+                </td>
 
-    </tr>
+            </tr>
 
-    {{endfor roles}}
+            {{endfor roles}}
 
-</table>
+        </tbody>
+
+    </table>
+
+    <hr>
+        <a href="index.php?page=Menu_Menu" class="btn btn-secondary">
+            Regresar
+        </a>
+    </hr>
+
+</section>
