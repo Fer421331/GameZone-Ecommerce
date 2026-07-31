@@ -106,3 +106,104 @@
     </div>
 
 </section>
+
+<section class="home-section catalog-home">
+
+    <h2>Productos Destacados</h2>
+
+    <div class="product-grid">
+
+
+        {{foreach productos}}
+
+
+        <article class="product-card">
+
+
+            <div class="product-image">
+
+                <img 
+                    src="{{imagen_ruta}}" 
+                    alt="{{producto_nombre}}"
+                >
+
+            </div>
+
+
+            <div class="product-info">
+
+
+                <h3>
+
+                    {{producto_nombre}}
+
+                </h3>
+
+
+                <span class="product-category">
+
+                    {{categoria_nombre}}
+
+                </span>
+
+
+                <p>
+
+                    {{marca_nombre}}
+
+                </p>
+
+
+                <p>
+
+                    {{plataforma_nombre}}
+
+                </p>
+
+
+                <div class="product-price">
+
+                    L {{producto_precio}}
+
+                </div>
+
+
+                <div class="product-actions">
+
+                    <a 
+                    href="index.php?page=Catalogo_Catalogo"
+                    class="btn-primary">
+
+                        Ver catálogo
+
+                    </a>
+
+                </div>
+
+
+            </div>
+
+
+        </article>
+
+
+        {{endfor productos}}
+
+
+    </div>
+
+
+    <div style="text-align:center; margin-top:30px;">
+
+        <a 
+        href="index.php?page=Catalogo_Catalogo"
+        class="btn primary">
+
+            Ver todos los videojuegos
+
+        </a>
+
+    </div>
+
+
+</section>

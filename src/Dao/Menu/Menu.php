@@ -25,16 +25,6 @@ class Menu extends Table
                 "url" => "index.php?page=Productos_Productos"
             ],
             [
-                "titulo" => "Carrito",
-                "descripcion" => "Ver carrito de compras",
-                "url" => "index.php?page=Carrito_Carrito"
-            ],
-            [
-                "titulo" => "Checkout",
-                "descripcion" => "Administrar pagos",
-                "url" => "index.php?page=Checkout_Checkout"
-            ],
-            [
                 "titulo" => "Usuarios",
                 "descripcion" => "Administrar usuarios",
                 "url" => "index.php?page=Security_RolesUsuarios"

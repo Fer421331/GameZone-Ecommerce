@@ -31,3 +31,9 @@
     </tbody>
 
 </table>
+
+<hr>
+    <a href="index.php?page=Menu_Menu" class="btn btn-secondary">
+        Regresar
+    </a>
+</hr>

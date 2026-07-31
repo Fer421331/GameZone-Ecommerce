@@ -239,11 +239,11 @@
         >
         {{endif showCommitBtn}}
 
-        <a
-            class="btn-back"
-            href="index.php?page=Productos_Productos"
-        >
-            Regresar
-        </a>
+        <hr>
+            <a href="index.php?page=Productos_Productos" class="btn btn-secondary">
+                Regresar
+            </a>
+        </hr>
+
     </div>
 </form>

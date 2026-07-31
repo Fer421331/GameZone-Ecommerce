@@ -2,7 +2,7 @@
 
 <section class="WWList">
 
-    <a href="index.php?page=Categorias_Categoria&mode=INS" class="btn-primary">
+    <a href="index.php?page=Categorias_Categoria&mode=INS" class="btn btn-secondary">
         + Nueva Categoría
     </a>
 
@@ -62,10 +62,10 @@
 
     </table>
 
-    <br>
-
-    <a href="index.php" class="btn-back">
-        Regresar al Inicio
-    </a>
+    <hr>
+        <a href="index.php?page=Menu_Menu" class="btn btn-secondary">
+            Regresar
+        </a>
+    </hr>
 
 </section>

@@ -318,4 +318,131 @@ class Productos extends Table
 
         return intval($resultado["total"] ?? 0) > 0;
     }
+
+    public static function getProductosPublicados(): array
+    {
+        $sql = "
+        SELECT
+            p.producto_id,
+            p.producto_nombre,
+            p.producto_descripcion,
+            p.producto_precio,
+            p.producto_stock,
+
+            c.categoria_nombre,
+
+            m.marca_nombre,
+
+            COALESCE(
+                pl.plataforma_nombre,
+                'Sin plataforma'
+            ) AS plataforma_nombre,
+
+            COALESCE(
+                img.imagen_ruta,
+                'public/img/no-image.png'
+            ) AS imagen_ruta
+
+        FROM productos p
+
+        INNER JOIN categorias c
+            ON p.categoria_id = c.categoria_id
+
+        INNER JOIN marcas m
+            ON p.marca_id = m.marca_id
+
+        LEFT JOIN plataformas pl
+            ON p.plataforma_id = pl.plataforma_id
+
+        LEFT JOIN producto_imagenes img
+            ON img.imagen_id = (
+                SELECT imagen_id
+                FROM producto_imagenes
+                WHERE producto_id = p.producto_id
+                  AND imagen_estado = 'ACT'
+                ORDER BY
+                    imagen_principal DESC,
+                    imagen_orden ASC
+                LIMIT 1
+            )
+
+        WHERE
+            p.producto_estado = 'ACT'
+        AND
+            p.producto_activo_web = 'ACT'
+
+        ORDER BY
+            p.producto_fecha_publicacion DESC,
+            p.producto_nombre;
+    ";
+
+        return self::obtenerRegistros($sql, []);
+    }
+
+    public static function getProductoCatalogoById(
+        int $productoId
+    ): ?array {
+
+        $sql = "
+        SELECT
+            p.producto_id,
+            p.producto_nombre,
+            p.producto_descripcion,
+            p.producto_precio,
+            p.producto_stock,
+
+            c.categoria_nombre,
+
+            m.marca_nombre,
+
+            COALESCE(
+                pl.plataforma_nombre,
+                'Sin plataforma'
+            ) AS plataforma_nombre,
+
+            COALESCE(
+                img.imagen_ruta,
+                'public/img/no-image.png'
+            ) AS imagen_ruta
+
+        FROM productos p
+
+        INNER JOIN categorias c
+            ON p.categoria_id = c.categoria_id
+
+        INNER JOIN marcas m
+            ON p.marca_id = m.marca_id
+
+        LEFT JOIN plataformas pl
+            ON p.plataforma_id = pl.plataforma_id
+
+        LEFT JOIN producto_imagenes img
+            ON img.imagen_id = (
+                SELECT imagen_id
+                FROM producto_imagenes
+                WHERE producto_id = p.producto_id
+                  AND imagen_estado = 'ACT'
+                ORDER BY
+                    imagen_principal DESC,
+                    imagen_orden ASC
+                LIMIT 1
+            )
+
+        WHERE
+            p.producto_id = :producto_id
+        AND
+            p.producto_estado = 'ACT'
+        AND
+            p.producto_activo_web = 'ACT';
+    ";
+
+        $producto = self::obtenerUnRegistro(
+            $sql,
+            [
+                "producto_id" => $productoId
+            ]
+        );
+
+        return $producto ?: null;
+    }
 }

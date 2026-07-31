@@ -10,10 +10,7 @@
             </p>
         </div>
 
-        <a
-            href="index.php?page=Productos_Producto&mode=INS"
-            class="producto-btn producto-btn-nuevo"
-        >
+        <a href="index.php?page=Productos_Producto&mode=INS" class="btn btn-secundary">
             <span class="producto-btn-icon">+</span>
             Nuevo Producto
         </a>
@@ -29,12 +26,7 @@
 
             <div class="productos-search">
                 <span>⌕</span>
-                <input
-                    type="text"
-                    id="buscarProducto"
-                    placeholder="Buscar producto..."
-                    autocomplete="off"
-                >
+                <input type="text" id="buscarProducto" placeholder="Buscar producto..." autocomplete="off">
             </div>
         </div>
 
@@ -124,27 +116,18 @@
 
                         <td>
                             <div class="producto-acciones">
-                                <a
-                                    href="index.php?page=Productos_Producto&mode=DSP&producto_id={{producto_id}}"
-                                    class="producto-btn-accion producto-btn-ver"
-                                    title="Ver producto"
-                                >
+                                <a href="index.php?page=Productos_Producto&mode=DSP&producto_id={{producto_id}}"
+                                    class="producto-btn-accion producto-btn-ver" title="Ver producto">
                                     Ver
                                 </a>
 
-                                <a
-                                    href="index.php?page=Productos_Producto&mode=UPD&producto_id={{producto_id}}"
-                                    class="producto-btn-accion producto-btn-editar"
-                                    title="Editar producto"
-                                >
+                                <a href="index.php?page=Productos_Producto&mode=UPD&producto_id={{producto_id}}"
+                                    class="producto-btn-accion producto-btn-editar" title="Editar producto">
                                     Editar
                                 </a>
 
-                                <a
-                                    href="index.php?page=Productos_Producto&mode=DEL&producto_id={{producto_id}}"
-                                    class="producto-btn-accion producto-btn-desactivar"
-                                    title="Desactivar producto"
-                                >
+                                <a href="index.php?page=Productos_Producto&mode=DEL&producto_id={{producto_id}}"
+                                    class="producto-btn-accion producto-btn-desactivar" title="Desactivar producto">
                                     Desactivar
                                 </a>
                             </div>
@@ -155,34 +138,35 @@
             </table>
         </div>
 
-        <div class="productos-footer">
-            <a href="index.php" class="producto-btn-regresar">
-                ← Regresar al inicio
+        <hr>
+            <a href="index.php?page=Menu_Menu" class="btn btn-secondary">
+                Regresar
             </a>
-        </div>
+        </hr>
 
     </div>
+
 </section>
 
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const buscador = document.getElementById("buscarProducto");
-    const filas = document.querySelectorAll("#tablaProductos tbody tr");
+    document.addEventListener("DOMContentLoaded", function () {
+        const buscador = document.getElementById("buscarProducto");
+        const filas = document.querySelectorAll("#tablaProductos tbody tr");
 
-    if (!buscador) {
-        return;
-    }
+        if (!buscador) {
+            return;
+        }
 
-    buscador.addEventListener("input", function () {
-        const texto = this.value.toLowerCase().trim();
+        buscador.addEventListener("input", function () {
+            const texto = this.value.toLowerCase().trim();
 
-        filas.forEach(function (fila) {
-            const contenido = fila.textContent.toLowerCase();
+            filas.forEach(function (fila) {
+                const contenido = fila.textContent.toLowerCase();
 
-            fila.style.display = contenido.includes(texto)
-                ? ""
-                : "none";
+                fila.style.display = contenido.includes(texto)
+                    ? ""
+                    : "none";
+            });
         });
     });
-});
 </script>
