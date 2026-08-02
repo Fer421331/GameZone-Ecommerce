@@ -172,7 +172,7 @@
 
                     <a 
                     href="index.php?page=Catalogo_Catalogo"
-                    class="btn-primary">
+                    class="btn btn-secondary">
 
                         Ver catálogo
 

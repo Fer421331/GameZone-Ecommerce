@@ -32,7 +32,7 @@
                 </td>
 
                 <td>
-                    <a href="index.php?page=Security_FuncionRol&rolescod={{rolescod}}">
+                    <a href="index.php?page=Security_FuncionRol&rolescod={{rolescod}}" class="btn btn-secondary">
                         Administrar funciones
                     </a>
                 </td>

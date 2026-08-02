@@ -1,26 +1,35 @@
 <section class="container mt-4">
 
     {{with rol}}
-    <h2>Administrar Funciones del Rol</h2>
+
+    <h2>Administración de Funciones del Rol</h2>
+
     <h4>{{rolesdsc}}</h4>
+
+    <p>Código: {{rolescod}}</p>
+
     {{endwith rol}}
 
     <hr>
 
     <div class="row">
 
-        <!-- Funciones Asignadas -->
         <div class="col-md-6">
 
             <h3>Funciones Asignadas</h3>
 
             <table class="table table-bordered table-striped">
+
                 <thead>
+
                     <tr>
-                        <th>Código</th>
-                        <th>Descripción</th>
-                        <th></th>
+
+                        <th>Función</th>
+
+                        <th>Acción</th>
+
                     </tr>
+
                 </thead>
 
                 <tbody>
@@ -28,7 +37,7 @@
                     {{foreach funcionesAsignadas}}
 
                     <tr>
-                        <td>{{fncod}}</td>
+
                         <td>{{fndsc}}</td>
 
                         <td>
@@ -57,9 +66,6 @@
 
         </div>
 
-
-        <!-- Funciones Disponibles -->
-
         <div class="col-md-6">
 
             <h3>Funciones Disponibles</h3>
@@ -67,11 +73,15 @@
             <table class="table table-bordered table-striped">
 
                 <thead>
+
                     <tr>
-                        <th>Código</th>
-                        <th>Descripción</th>
-                        <th></th>
+
+                        <th>Función</th>
+
+                        <th>Acción</th>
+
                     </tr>
+
                 </thead>
 
                 <tbody>
@@ -79,8 +89,6 @@
                     {{foreach funcionesDisponibles}}
 
                     <tr>
-
-                        <td>{{fncod}}</td>
 
                         <td>{{fndsc}}</td>
 
@@ -92,7 +100,7 @@
 
                                 <button type="submit" name="btnAgregar" class="btn btn-success btn-sm">
 
-                                    Agregar
+                                    Asignar
 
                                 </button>
 
@@ -114,7 +122,7 @@
 
     <hr>
 
-    <a href="index.php?page=Security_FuncionesRoles" class="btn btn-secondary">
+    <a class="btn btn-secondary" href="index.php?page=Security_FuncionesRoles">
 
         Regresar
 

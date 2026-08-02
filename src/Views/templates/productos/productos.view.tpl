@@ -9,7 +9,7 @@
                 de los videojuegos.
             </p>
         </div>
-
+        <br>
         <a href="index.php?page=Productos_Producto&mode=INS" class="btn btn-secundary">
             <span class="producto-btn-icon">+</span>
             Nuevo Producto
@@ -117,17 +117,17 @@
                         <td>
                             <div class="producto-acciones">
                                 <a href="index.php?page=Productos_Producto&mode=DSP&producto_id={{producto_id}}"
-                                    class="producto-btn-accion producto-btn-ver" title="Ver producto">
+                                    class="producto-btn-accion producto-btn-ver btn btn-secondary" title="Ver producto">
                                     Ver
                                 </a>
 
                                 <a href="index.php?page=Productos_Producto&mode=UPD&producto_id={{producto_id}}"
-                                    class="producto-btn-accion producto-btn-editar" title="Editar producto">
+                                    class="producto-btn-accion producto-btn-editar btn btn-secondary" title="Editar producto">
                                     Editar
                                 </a>
 
                                 <a href="index.php?page=Productos_Producto&mode=DEL&producto_id={{producto_id}}"
-                                    class="producto-btn-accion producto-btn-desactivar" title="Desactivar producto">
+                                    class="producto-btn-accion producto-btn-desactivar btn btn-secondary" title="Desactivar producto">
                                     Desactivar
                                 </a>
                             </div>

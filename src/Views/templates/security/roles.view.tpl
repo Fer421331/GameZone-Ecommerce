@@ -1,4 +1,4 @@
-<h1>Trabajar con Roles</h1>
+<h1>Roles</h1>
 
 <section class="grid">
     <div class="row">
@@ -49,7 +49,7 @@
                         Filtrar
                     </button>
                 </div>
-
+                <br>
             </div>
         </form>
     </div>
@@ -77,7 +77,7 @@
                 </th>
 
                 <th>
-                    <a href="index.php?page=Security_Rol&mode=INS">
+                    <a href="index.php?page=Security_Rol&mode=INS" class="btn btn-secondary">
                         Nuevo
                     </a>
                 </th>
@@ -99,8 +99,7 @@
 
 
                 <td>
-
-                    <a href="index.php?page=Security_Rol&mode=DSP&rolescod={{rolescod}}">
+                    <a href="index.php?page=Security_Rol&mode=DSP&rolescod={{rolescod}}" class="btn btn-secondary">
                         {{rolesdsc}}
                     </a>
 
@@ -114,12 +113,12 @@
 
                 <td class="center">
 
-                    <a href="index.php?page=Security_Rol&mode=UPD&rolescod={{rolescod}}">
+                    <a href="index.php?page=Security_Rol&mode=UPD&rolescod={{rolescod}}" class="btn btn-secondary">
                         Editar
                     </a>
 
 
-                    <a href="index.php?page=Security_Rol&mode=DEL&rolescod={{rolescod}}">
+                    <a href="index.php?page=Security_Rol&mode=DEL&rolescod={{rolescod}}" class="btn btn-secondary">
                         Eliminar
                     </a>
 

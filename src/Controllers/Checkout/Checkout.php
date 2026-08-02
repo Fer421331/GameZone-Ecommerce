@@ -3,38 +3,108 @@
 namespace Controllers\Checkout;
 
 use Controllers\PublicController;
+use Dao\Carrito\Carrito as CarritoDao;
+use Utilities\Context;
+use Utilities\PayPal\PayPalRestApi;
+use Utilities\PayPal\PayPalOrder;
+use Utilities\Site;
+use Views\Renderer;
 
 class Checkout extends PublicController
 {
+    private array $viewData = [];
+
     public function run(): void
     {
-        $viewData = array();
+        $this->viewData["productos"] = CarritoDao::getCart();
+        $this->viewData["total"] = number_format(
+            CarritoDao::getTotal(),
+            2
+        );
+
         if ($this->isPostBack()) {
-            $PayPalOrder = new \Utilities\Paypal\PayPalOrder(
-                "test" . (time() - 10000000),
-                "http://localhost:8080/mvc202402/index.php?page=Checkout_Error",
-                "http://localhost:8080/mvc202402/index.php?page=Checkout_Accept"
+
+            $carrito = CarritoDao::getCart();
+
+            if (empty($carrito)) {
+                Site::redirectTo("index.php?page=Carrito_Carrito");
+            }
+
+            $baseUrl =
+                sprintf(
+                    "%s://%s%s",
+                    isset($_SERVER["HTTPS"]) &&
+                    $_SERVER["HTTPS"] !== "off"
+                        ? "https"
+                        : "http",
+                    $_SERVER["HTTP_HOST"],
+                    rtrim(dirname($_SERVER["PHP_SELF"]), "/\\")
+                );
+
+            $errorUrl =
+                $baseUrl .
+                "/index.php?page=Checkout_Error";
+
+            $acceptUrl =
+                $baseUrl .
+                "/index.php?page=Checkout_Accept";
+
+            $paypalOrder = new PayPalOrder(
+                "ORD-" . time(),
+                $errorUrl,
+                $acceptUrl
             );
 
-            $PayPalOrder->addItem("Test", "TestItem1", "PRD1", 100, 15, 1, "DIGITAL_GOODS");
-            $PayPalOrder->addItem("Test 2", "TestItem2", "PRD2", 50, 7.5, 2, "DIGITAL_GOODS");
+            foreach ($carrito as $producto) {
 
-            $PayPalRestApi = new \Utilities\PayPal\PayPalRestApi(
-                \Utilities\Context::getContextByKey("PAYPAL_CLIENT_ID"),
-                \Utilities\Context::getContextByKey("PAYPAL_CLIENT_SECRET")
+                $paypalOrder->addItem(
+                    $producto["producto_nombre"],
+                    $producto["producto_descripcion"],
+                    (string)$producto["producto_id"],
+                    (float)$producto["producto_precio"],
+                    0,
+                    (int)$producto["cantidad"],
+                    "DIGITAL_GOODS"
+                );
+            }
+
+            $paypal = new PayPalRestApi(
+                Context::getContextByKey("PAYPAL_CLIENT_ID"),
+                Context::getContextByKey("PAYPAL_CLIENT_SECRET")
             );
-            $PayPalRestApi->getAccessToken();
-            $response = $PayPalRestApi->createOrder($PayPalOrder);
+
+            $paypal->getAccessToken();
+
+            $response = $paypal->createOrder(
+                $paypalOrder
+            );
+
+            if (!isset($response->id)) {
+                Site::redirectTo(
+                    "index.php?page=Checkout_Error"
+                );
+            }
 
             $_SESSION["orderid"] = $response->id;
+
             foreach ($response->links as $link) {
-                if ($link->rel == "approve") {
-                    \Utilities\Site::redirectTo($link->href);
+
+                if ($link->rel === "approve") {
+
+                    Site::redirectTo(
+                        $link->href
+                    );
                 }
             }
-            die();
+            
+            Site::redirectTo(
+                "index.php?page=Checkout_Error"
+            );
         }
 
-        \Views\Renderer::render("paypal/checkout", $viewData);
+        Renderer::render(
+            "paypal/checkout",
+            $this->viewData
+        );
     }
 }

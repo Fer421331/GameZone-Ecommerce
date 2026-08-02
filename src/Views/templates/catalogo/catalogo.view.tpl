@@ -11,6 +11,8 @@
 
     </div>
 
+    <br>
+
     <div class="product-grid">
 
         {{foreach productos}}
@@ -61,12 +63,12 @@
 
                 </div>
 
+                <br>
+
                 <div class="product-actions">
 
-                    <a href="index.php?page=Carrito_Carrito&action=ADD&producto_id={{producto_id}}" class="btn-primary">
-
+                    <a href="index.php?page=Carrito_Carrito&action=ADD&producto_id={{producto_id}}" class="btn btn-secondary">
                         Agregar al carrito
-
                     </a>
 
                 </div>

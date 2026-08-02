@@ -1,38 +1,17 @@
 <h1>{{FormTitle}}</h1>
 
-<form
-    action="index.php?page=Productos_Producto&mode={{mode}}&producto_id={{producto_id}}"
-    method="POST"
->
-    <input
-        type="hidden"
-        name="producto_csrf_token"
-        value="{{producto_csrf_token}}"
-    >
+<form action="index.php?page=Productos_Producto&mode={{mode}}&producto_id={{producto_id}}" method="POST">
+    <input type="hidden" name="producto_csrf_token" value="{{producto_csrf_token}}">
 
-    <input
-        type="hidden"
-        name="producto_id"
-        value="{{producto_id}}"
-    >
+    <input type="hidden" name="producto_id" value="{{producto_id}}">
 
     <label>ID del producto</label>
-    <input
-        type="text"
-        value="{{producto_id}}"
-        readonly
-    >
+    <input type="text" value="{{producto_id}}" readonly>
 
     <br><br>
 
     <label>SKU</label>
-    <input
-        type="text"
-        name="producto_sku"
-        maxlength="40"
-        value="{{producto_sku}}"
-        {{readonly}}
-    >
+    <input type="text" name="producto_sku" maxlength="40" value="{{producto_sku}}" {{readonly}}>
     <span class="error">
         {{producto_sku_error}}
     </span>
@@ -40,13 +19,7 @@
     <br><br>
 
     <label>Nombre</label>
-    <input
-        type="text"
-        name="producto_nombre"
-        maxlength="150"
-        value="{{producto_nombre}}"
-        {{readonly}}
-    >
+    <input type="text" name="producto_nombre" maxlength="150" value="{{producto_nombre}}" {{readonly}}>
     <span class="error">
         {{producto_nombre_error}}
     </span>
@@ -60,10 +33,7 @@
         </option>
 
         {{foreach categorias}}
-        <option
-            value="{{categoria_id}}"
-            {{selected}}
-        >
+        <option value="{{categoria_id}}" {{selected}}>
             {{categoria_nombre}}
         </option>
         {{endfor categorias}}
@@ -82,10 +52,7 @@
         </option>
 
         {{foreach marcas}}
-        <option
-            value="{{marca_id}}"
-            {{selected}}
-        >
+        <option value="{{marca_id}}" {{selected}}>
             {{marca_nombre}}
         </option>
         {{endfor marcas}}
@@ -104,10 +71,7 @@
         </option>
 
         {{foreach plataformas}}
-        <option
-            value="{{plataforma_id}}"
-            {{selected}}
-        >
+        <option value="{{plataforma_id}}" {{selected}}>
             {{plataforma_nombre}}
         </option>
         {{endfor plataformas}}
@@ -120,11 +84,7 @@
     <br><br>
 
     <label>Descripción</label>
-    <textarea
-        name="producto_descripcion"
-        rows="5"
-        {{readonly}}
-    >{{producto_descripcion}}</textarea>
+    <textarea name="producto_descripcion" rows="5" {{readonly}}>{{producto_descripcion}}</textarea>
 
     <span class="error">
         {{producto_descripcion_error}}
@@ -133,14 +93,7 @@
     <br><br>
 
     <label>Costo (L)</label>
-    <input
-        type="number"
-        name="producto_costo"
-        min="0"
-        step="0.01"
-        value="{{producto_costo}}"
-        {{readonly}}
-    >
+    <input type="number" name="producto_costo" min="0" step="0.01" value="{{producto_costo}}" {{readonly}}>
 
     <span class="error">
         {{producto_costo_error}}
@@ -149,14 +102,7 @@
     <br><br>
 
     <label>Precio de venta (L)</label>
-    <input
-        type="number"
-        name="producto_precio"
-        min="0.01"
-        step="0.01"
-        value="{{producto_precio}}"
-        {{readonly}}
-    >
+    <input type="number" name="producto_precio" min="0.01" step="0.01" value="{{producto_precio}}" {{readonly}}>
 
     <span class="error">
         {{producto_precio_error}}
@@ -165,14 +111,7 @@
     <br><br>
 
     <label>Stock</label>
-    <input
-        type="number"
-        name="producto_stock"
-        min="0"
-        step="1"
-        value="{{producto_stock}}"
-        {{readonly}}
-    >
+    <input type="number" name="producto_stock" min="0" step="1" value="{{producto_stock}}" {{readonly}}>
 
     <span class="error">
         {{producto_stock_error}}
@@ -181,10 +120,7 @@
     <br><br>
 
     <label>Visible en el catálogo web</label>
-    <select
-        name="producto_activo_web"
-        {{disabled}}
-    >
+    <select name="producto_activo_web" {{disabled}}>
         <option value="ACT" {{web_act}}>
             Publicado
         </option>
@@ -201,10 +137,7 @@
     <br><br>
 
     <label>Estado</label>
-    <select
-        name="producto_estado"
-        {{disabled}}
-    >
+    <select name="producto_estado" {{disabled}}>
         <option value="ACT" {{estado_act}}>
             Activo
         </option>
@@ -232,18 +165,13 @@
 
     <div class="buttons">
         {{if showCommitBtn}}
-        <input
-            class="btn-primary"
-            type="submit"
-            value="Confirmar"
-        >
+        <input class="btn btn-secondary" type="submit" value="Confirmar">
         {{endif showCommitBtn}}
-
-        <hr>
-            <a href="index.php?page=Productos_Productos" class="btn btn-secondary">
-                Regresar
-            </a>
-        </hr>
-
     </div>
 </form>
+
+<hr>
+<a href="index.php?page=Productos_Productos" class="btn btn-secondary">
+    Regresar
+</a>
+</hr>

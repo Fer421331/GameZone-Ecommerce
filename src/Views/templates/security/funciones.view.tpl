@@ -1,4 +1,4 @@
-<h1>Trabajar con Funciones</h1>
+<h1>Funciones</h1>
 
 <section class="grid">
     <div class="row">
@@ -62,7 +62,7 @@
     </div>
 </section>
 
-
+<br>
 <section class="WWList">
 
     <table>
@@ -88,7 +88,7 @@
                 </th>
 
                 <th>
-                    <a href="index.php?page=Security_Funcion&mode=INS">
+                    <a href="index.php?page=Security_Funcion&mode=INS" class="btn btn-secondary">
                         Crear
                     </a>
                 </th>
@@ -115,7 +115,7 @@
 
                 <td>
 
-                    <a href="index.php?page=Security_Funcion&mode=DSP&fncod={{fncod}}">
+                    <a href="index.php?page=Security_Funcion&mode=DSP&fncod={{fncod}}" class="btn btn-secondary">
                         {{fndsc}}
                     </a>
 
@@ -137,12 +137,12 @@
 
                 <td class="center">
 
-                    <a href="index.php?page=Security_Funcion&mode=UPD&fncod={{fncod}}">
+                    <a href="index.php?page=Security_Funcion&mode=UPD&fncod={{fncod}}" class="btn btn-secondary">
                         Editar
                     </a>
 
 
-                    <a href="index.php?page=Security_Funcion&mode=DEL&fncod={{fncod}}">
+                    <a href="index.php?page=Security_Funcion&mode=DEL&fncod={{fncod}}" class="btn btn-secondary">
                         Eliminar
                     </a>
 

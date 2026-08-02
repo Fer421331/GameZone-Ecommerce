@@ -50,9 +50,11 @@
 
         {{endif showCommitBtn}}
 
-        <a class="btn-back" href="index.php?page=Categorias_Categorias">
+        <hr>
+        <a href="index.php?page=Categorias_Categorias" class="btn btn-secondary">
             Regresar
         </a>
+    </hr>
 
     </div>
 

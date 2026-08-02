@@ -22,7 +22,7 @@
             <td>{{usertipo}}</td>
 
             <td>
-                <a href="index.php?page=Security_RolUsuario&usercod={{usercod}}">
+                <a href="index.php?page=Security_RolUsuario&usercod={{usercod}}" class="btn btn.secondary">
                     Administrar Roles
                 </a>
             </td>

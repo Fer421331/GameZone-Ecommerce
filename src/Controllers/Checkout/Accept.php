@@ -3,24 +3,87 @@
 namespace Controllers\Checkout;
 
 use Controllers\PublicController;
+use Dao\Carrito\Carrito as CarritoDao;
+use Dao\Ventas\Ventas as VentasDao;
+use Utilities\Security;
+use Utilities\Context;
+use Utilities\PayPal\PayPalRestApi;
+use Views\Renderer;
 
 class Accept extends PublicController
 {
     public function run(): void
     {
         $dataview = array();
-        $token = $_GET["token"] ?: "";
-        $session_token = $_SESSION["orderid"] ?: "";
+
+        $token = $_GET["token"] ?? "";
+        $session_token = $_SESSION["orderid"] ?? "";
+
         if ($token !== "" && $token == $session_token) {
-            $PayPalRestApi = new \Utilities\PayPal\PayPalRestApi(
-                \Utilities\Context::getContextByKey("PAYPAL_CLIENT_ID"),
-                \Utilities\Context::getContextByKey("PAYPAL_CLIENT_SECRET")
+
+            $paypal = new PayPalRestApi(
+                Context::getContextByKey("PAYPAL_CLIENT_ID"),
+                Context::getContextByKey("PAYPAL_CLIENT_SECRET")
             );
-            $result = $PayPalRestApi->captureOrder($session_token);
-            $dataview["orderjson"] = json_encode($result, JSON_PRETTY_PRINT);
+
+            $result = $paypal->captureOrder($session_token);
+
+            if (isset($result->status) && $result->status == "COMPLETED") {
+
+                $usercod = Security::getUserId();
+                $productos = CarritoDao::getCart();
+                $total = (float)CarritoDao::getTotal();
+
+                $metodo_pago_id = VentasDao::getMetodoPagoId("PayPal");
+
+                $venta_id = VentasDao::crearVenta(
+                    $usercod,
+                    0,
+                    $metodo_pago_id,
+                    $total,
+                    $total,
+                    "APR"
+                );
+
+                foreach ($productos as $producto) {
+                    VentasDao::agregarDetalle(
+                        $venta_id,
+                        $producto
+                    );
+                }
+
+                VentasDao::registrarPago(
+                    $venta_id,
+                    $metodo_pago_id,
+                    $total,
+                    $session_token
+                );
+
+                CarritoDao::clearCart();
+
+                $dataview["mensaje"] = "Compra realizada correctamente.";
+                $dataview["venta_id"] = $venta_id;
+
+                unset($_SESSION["orderid"]);
+
+            } else {
+
+                $dataview["mensaje"] = "El pago no fue completado.";
+            }
+
+            $dataview["orderjson"] = json_encode(
+                $result,
+                JSON_PRETTY_PRINT
+            );
+
         } else {
+
             $dataview["orderjson"] = "No Order Available!!!";
         }
-        \Views\Renderer::render("paypal/accept", $dataview);
+
+        Renderer::render(
+            "paypal/accept",
+            $dataview
+        );
     }
 }

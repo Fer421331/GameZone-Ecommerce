@@ -1,11 +1,12 @@
-<h1>Work With - Categorías</h1>
+<h1>Categorías</h1>
 
 <section class="WWList">
 
     <a href="index.php?page=Categorias_Categoria&mode=INS" class="btn btn-secondary">
         + Nueva Categoría
     </a>
-
+    <br>
+    <br>
     <table>
 
         <thead>
