@@ -25,7 +25,7 @@ class UserMenu
         if (Security::isInRol($userId, "1") || Security::isInRol($userId, "4")) {
 
             $menu[] = [
-                "url" => "index.php?page=Historial_Historial",
+                "url" => "index.php?page=Security_Bitacora",
                 "icon" => "fas fa-clipboard-list",
                 "label" => "Bitácora"
             ];
@@ -46,7 +46,7 @@ class UserMenu
         if (Security::isInRol($userId, "2")) {
 
             $menu[] = [
-                "url" => "index.php?page=Historial_Historial",
+                "url" => "index.php?page=Security_Bitacora",
                 "icon" => "fas fa-clipboard-list",
                 "label" => "Bitácora"
             ];

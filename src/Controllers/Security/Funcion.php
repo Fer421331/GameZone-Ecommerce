@@ -7,6 +7,7 @@ use Dao\Security\Security as SecurityDAO;
 use Views\Renderer;
 use Utilities\Site;
 use Utilities\Validators;
+use Utilities\Bitacora;
 
 class Funcion extends PrivateController
 {
@@ -55,8 +56,6 @@ class Funcion extends PrivateController
                 "security/funcion",
                 $this->viewData
             );
-
-
         } catch (\Exception $e) {
 
             Site::redirectToWithMsg(
@@ -83,8 +82,8 @@ class Funcion extends PrivateController
 
         $this->readonly =
             $this->mode === "DEL"
-                ? "readonly"
-                : "";
+            ? "readonly"
+            : "";
 
 
         $this->showCommitBtn =
@@ -152,7 +151,6 @@ class Funcion extends PrivateController
 
                 $errors["fncod_error"] =
                     "El código es obligatorio";
-
             } else {
 
                 $existing =
@@ -229,9 +227,14 @@ class Funcion extends PrivateController
                     $this->funcion["fntyp"]
                 );
 
-            break;
+                Bitacora::registrar(
+                    "Funciones",
+                    "Función creada",
+                    "Código: " . $this->funcion["fncod"],
+                    "LOG"
+                );
 
-
+                break;
 
             case "UPD":
 
@@ -242,9 +245,14 @@ class Funcion extends PrivateController
                     $this->funcion["fntyp"]
                 );
 
-            break;
+                Bitacora::registrar(
+                    "Funciones",
+                    "Función modificada",
+                    "Código: " . $this->funcion["fncod"],
+                    "LOG"
+                );
 
-
+                break;
 
             case "DEL":
 
@@ -252,7 +260,14 @@ class Funcion extends PrivateController
                     $this->funcion["fncod"]
                 );
 
-            break;
+                Bitacora::registrar(
+                    "Funciones",
+                    "Función eliminada",
+                    "Código: " . $this->funcion["fncod"],
+                    "WAR"
+                );
+
+                break;
         }
 
 

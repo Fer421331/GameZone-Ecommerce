@@ -7,7 +7,7 @@ use Dao\Table;
 class Bitacora extends Table
 {
     public static function registrar(
-        int $usuario,
+        ?int $usuario,
         string $programa,
         string $descripcion,
         string $observacion,
@@ -45,16 +45,94 @@ class Bitacora extends Table
         ) > 0;
     }
 
-    public static function obtenerBitacora(): array
-    {
-        $sql = "SELECT
-                    b.*,
-                    u.username
-                FROM bitacora b
-                LEFT JOIN usuario u
-                    ON b.bitusuario = u.usercod
-                ORDER BY b.bitacorafch DESC;";
+    public static function obtenerBitacora(
+        string $fechaDesde = "",
+        string $fechaHasta = "",
+        int $page = 0,
+        int $limit = 10
+    ): array {
 
-        return self::obtenerRegistros($sql, []);
+        $where = "";
+        $params = [];
+
+
+        if ($fechaDesde !== "") {
+
+            $where .= "
+            AND DATE(b.bitacorafch) >= :fechaDesde
+        ";
+
+            $params["fechaDesde"] = $fechaDesde;
+        }
+
+        if ($fechaHasta !== "") {
+
+            $where .= "
+            AND DATE(b.bitacorafch) <= :fechaHasta
+        ";
+
+            $params["fechaHasta"] = $fechaHasta;
+        }
+
+        $sqlCount = "
+        SELECT COUNT(*) total
+
+        FROM bitacora b
+
+        LEFT JOIN usuario u
+            ON b.bitusuario = u.usercod
+
+        WHERE 1=1
+
+        $where
+    ";
+
+        $total =
+            self::obtenerUnRegistro(
+                $sqlCount,
+                $params
+            )["total"];
+
+        $sql = "
+
+        SELECT
+            b.*,
+
+            COALESCE(
+                u.username,
+                'Usuario no autenticado'
+            ) username
+
+        FROM bitacora b
+
+        LEFT JOIN usuario u
+
+            ON b.bitusuario = u.usercod
+
+        WHERE 1=1
+
+        $where
+
+        ORDER BY
+            b.bitacorafch DESC
+
+        LIMIT $limit
+
+        OFFSET " . ($page * $limit) . ";
+
+    ";
+
+        return [
+
+            "bitacora" =>
+            self::obtenerRegistros(
+                $sql,
+                $params
+            ),
+
+            "total" =>
+            intval($total)
+
+        ];
     }
 }

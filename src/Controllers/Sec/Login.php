@@ -1,5 +1,9 @@
 <?php
+
 namespace Controllers\Sec;
+
+use Utilities\Bitacora;
+
 class Login extends \Controllers\PublicController
 {
     private $txtEmail = "";
@@ -9,7 +13,7 @@ class Login extends \Controllers\PublicController
     private $generalError = "";
     private $hasError = false;
 
-    public function run() :void
+    public function run(): void
     {
         if ($this->isPostBack()) {
             $this->txtEmail = $_POST["txtEmail"];
@@ -26,34 +30,39 @@ class Login extends \Controllers\PublicController
             if (! $this->hasError) {
                 if ($dbUser = \Dao\Security\Security::getUsuarioByEmail($this->txtEmail)) {
                     if ($dbUser["userest"] != \Dao\Security\Estados::ACTIVO) {
+
                         $this->generalError = "¡Credenciales son incorrectas!";
                         $this->hasError = true;
-                        error_log(
-                            sprintf(
-                                "ERROR: %d %s tiene cuenta con estado %s",
-                                $dbUser["usercod"],
-                                $dbUser["useremail"],
-                                $dbUser["userest"]
-                            )
+
+                        Bitacora::registrar(
+                            "Login",
+                            "Intento de inicio de sesión fallido",
+                            "Usuario inactivo: " . $dbUser["useremail"],
+                            "WAR"
                         );
-                    }
-                    if (!\Dao\Security\Security::verifyPassword($this->txtPswd, $dbUser["userpswd"])) {
+                    } else if (!\Dao\Security\Security::verifyPassword($this->txtPswd, $dbUser["userpswd"])) {
+
                         $this->generalError = "¡Credenciales son incorrectas!";
                         $this->hasError = true;
-                        error_log(
-                            sprintf(
-                                "ERROR: %d %s contraseña incorrecta",
-                                $dbUser["usercod"],
-                                $dbUser["useremail"]
-                            )
+
+                        Bitacora::registrar(
+                            "Login",
+                            "Intento de inicio de sesión fallido",
+                            "Contraseña incorrecta para: " . $dbUser["useremail"],
+                            "WAR"
                         );
-                        // Aqui se debe establecer acciones segun la politica de la institucion.
                     }
                     if (! $this->hasError) {
                         \Utilities\Security::login(
                             $dbUser["usercod"],
                             $dbUser["username"],
                             $dbUser["useremail"]
+                        );
+                        Bitacora::registrar(
+                            "Login",
+                            "Inicio de sesión exitoso",
+                            "Usuario: " . $dbUser["useremail"],
+                            "LOG"
                         );
                         if (\Utilities\Context::getContextByKey("redirto") !== "") {
                             \Utilities\Site::redirectTo(
@@ -71,6 +80,12 @@ class Login extends \Controllers\PublicController
                         )
                     );
                     $this->generalError = "¡Credenciales son incorrectas!";
+                    Bitacora::registrar(
+                        "Login",
+                        "Intento de inicio de sesión fallido",
+                        "Usuario inexistente: " . $this->txtEmail,
+                        "WAR"
+                    );
                 }
             }
         }
@@ -78,4 +93,3 @@ class Login extends \Controllers\PublicController
         \Views\Renderer::render("security/login", $dataView);
     }
 }
-?>

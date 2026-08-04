@@ -90,12 +90,12 @@ class Security extends \Dao\Table
 
         if ($result) {
 
-      
+
             $usuario = self::getUsuarioByEmail($email);
 
             if ($usuario) {
 
-              
+
                 self::assignRolToUser(
                     $usuario["usercod"],
                     "3"
@@ -548,6 +548,59 @@ class Security extends \Dao\Table
                 "cod" => $cod
             ]
         );
+    }
+
+    public static function getUsuariosPaginados(
+        int $page,
+        int $limit
+    ): array {
+
+
+        $sql = "
+        SELECT
+            usercod,
+            useremail,
+            username,
+            userest,
+            usertipo
+
+        FROM usuario
+
+        ORDER BY usercod DESC
+
+        LIMIT $limit
+
+        OFFSET " . ($page * $limit) . ";
+    ";
+
+
+
+        $usuarios =
+            self::obtenerRegistros(
+                $sql,
+                []
+            );
+
+
+
+        $total =
+            self::obtenerUnRegistro(
+                "
+            SELECT COUNT(*) total
+            FROM usuario;
+            ",
+                []
+            )["total"];
+
+
+
+        return [
+
+            "usuarios" => $usuarios,
+
+            "total" => intval($total)
+
+        ];
     }
 
     private function __construct() {}

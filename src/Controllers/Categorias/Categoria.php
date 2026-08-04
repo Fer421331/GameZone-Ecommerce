@@ -4,6 +4,7 @@ namespace Controllers\Categorias;
 
 use Controllers\PrivateController;
 use Dao\Categorias\Categorias as CategoriasDao;
+use Utilities\Bitacora;
 use Utilities\Site;
 use Utilities\Validators;
 use Views\Renderer;
@@ -190,6 +191,13 @@ class Categoria extends PrivateController
             )
         ) {
 
+            Bitacora::registrar(
+                "Categorías",
+                "Categoría creada",
+                "Nombre: " . $this->categoria["categoria_nombre"],
+                "INS"
+            );
+
             Site::redirectToWithMsg(
                 "index.php?page=Categorias_Categorias",
                 "Categoría agregada correctamente"
@@ -207,7 +215,13 @@ class Categoria extends PrivateController
                 $this->categoria["categoria_estado"]
             )
         ) {
-
+            Bitacora::registrar(
+                "Categorías",
+                "Categoría actualizada",
+                "ID: " . $this->categoria["categoria_id"] .
+                    " | Nombre: " . $this->categoria["categoria_nombre"],
+                "UPD"
+            );
             Site::redirectToWithMsg(
                 "index.php?page=Categorias_Categorias",
                 "Categoría actualizada correctamente"
@@ -222,7 +236,13 @@ class Categoria extends PrivateController
                 intval($this->categoria["categoria_id"])
             )
         ) {
-
+            Bitacora::registrar(
+                "Categorías",
+                "Categoría eliminada",
+                "ID: " . $this->categoria["categoria_id"] .
+                    " | Nombre: " . $this->categoria["categoria_nombre"],
+                "DEL"
+            );
             Site::redirectToWithMsg(
                 "index.php?page=Categorias_Categorias",
                 "Categoría eliminada correctamente"

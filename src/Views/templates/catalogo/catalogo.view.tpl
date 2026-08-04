@@ -22,7 +22,8 @@
 
             <label>Buscar videojuego</label>
 
-            <input type="text" name="buscar" value="{{buscar}}" placeholder="Ej. GTA V, FIFA, Mario...">
+            <input type="text" name="buscar" id="buscarCatalogo" value="{{buscar}}"
+                placeholder="Ej. GTA V, FIFA, Mario...">
 
         </div>
 
@@ -79,12 +80,14 @@
                 </option>
 
                 <option value="favoritos" {{orden_favoritos}}>
-                    ❤️ Favoritos 
+                    ❤️ Favoritos
                 </option>
 
             </select>
 
         </div>
+
+        <br>
 
         <!-- Botón -->
         <div class="filter-group">
@@ -101,7 +104,7 @@
 
     <br>
 
-    <div class="product-grid">
+    <div class="product-grid" id="tablaCatalogo">
 
         {{foreach productos}}
 
@@ -141,7 +144,7 @@
 
                 <div class="product-price">
 
-                    L {{producto_precio}}
+                    $ {{producto_precio}}
 
                 </div>
 
@@ -201,3 +204,33 @@
     </a>
 
 </section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const buscador = document.getElementById("buscarCatalogo");
+        const productos = document.querySelectorAll("#tablaCatalogo article");
+
+        if (!buscador) {
+            return;
+        }
+
+        buscador.addEventListener("input", function () {
+
+            const texto = this.value.toLowerCase().trim();
+
+            productos.forEach(function (producto) {
+
+                const contenido = producto.textContent.toLowerCase();
+
+                producto.style.display =
+                    contenido.includes(texto)
+                        ? ""
+                        : "none";
+
+            });
+
+        });
+
+    });
+</script>

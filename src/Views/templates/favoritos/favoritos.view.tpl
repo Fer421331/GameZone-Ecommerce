@@ -8,11 +8,19 @@
             Tus videojuegos favoritos.
         </p>
 
+        <br>
+
     </div>
 
+    <div class="catalog-search">
+
+        <input type="text" id="buscarFavorito" placeholder="Buscar favorito..." autocomplete="off">
+
+    </div>
+    
     <br>
 
-    <div class="product-grid">
+    <div class="product-grid" id="tablaFavoritos">
 
         {{foreach favoritos}}
 
@@ -98,3 +106,33 @@
     </a>
 
 </section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const buscador = document.getElementById("buscarFavorito");
+        const productos = document.querySelectorAll("#tablaFavoritos article");
+
+        if (!buscador) {
+            return;
+        }
+
+        buscador.addEventListener("input", function () {
+
+            const texto = this.value.toLowerCase().trim();
+
+            productos.forEach(function (producto) {
+
+                const contenido = producto.textContent.toLowerCase();
+
+                producto.style.display =
+                    contenido.includes(texto)
+                        ? ""
+                        : "none";
+
+            });
+
+        });
+
+    });
+</script>

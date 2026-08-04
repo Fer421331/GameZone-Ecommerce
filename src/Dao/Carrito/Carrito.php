@@ -46,13 +46,15 @@ class Carrito
             $_SESSION["cart_message"] =
                 "No hay más unidades disponibles de este producto.";
 
+            $_SESSION["cart_error_log"] =
+                "Stock insuficiente al intentar agregar producto ID: " . $productoId;
+
             return false;
         }
 
         if (isset($_SESSION[self::SESSION_KEY][$productoId])) {
 
             $_SESSION[self::SESSION_KEY][$productoId]["cantidad"]++;
-
         } else {
 
             $_SESSION[self::SESSION_KEY][$productoId] = [
@@ -183,5 +185,16 @@ class Carrito
         }
 
         return $total;
+    }
+
+    public static function getMensajeLog(): string
+    {
+        self::iniciarSesion();
+
+        $mensaje = $_SESSION["cart_log"] ?? "";
+
+        unset($_SESSION["cart_log"]);
+
+        return $mensaje;
     }
 }

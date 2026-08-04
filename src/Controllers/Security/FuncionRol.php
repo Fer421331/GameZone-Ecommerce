@@ -6,8 +6,9 @@ use Controllers\PrivateController;
 use Views\Renderer;
 use Dao\Security\Security as SecurityDAO;
 use Utilities\Site;
+use Utilities\Bitacora;
 
-class FuncionRol extends PrivateController 
+class FuncionRol extends PrivateController
 {
     private $rolescod = "";
     private $rol = [];
@@ -39,6 +40,14 @@ class FuncionRol extends PrivateController
                     $this->rolescod,
                     $_POST["fncod"]
                 );
+
+                Bitacora::registrar(
+                    "Seguridad",
+                    "Función asignada a rol",
+                    "Rol: " . $this->rolescod .
+                        " Función: " . $_POST["fncod"],
+                    "LOG"
+                );
             }
 
             if (isset($_POST["btnEliminar"])) {
@@ -46,6 +55,14 @@ class FuncionRol extends PrivateController
                 SecurityDAO::removeFeatureFromRol(
                     $_POST["fncod"],
                     $this->rolescod
+                );
+
+                Bitacora::registrar(
+                    "Seguridad",
+                    "Función removida de rol",
+                    "Rol: " . $this->rolescod .
+                        " Función: " . $_POST["fncod"],
+                    "WAR"
                 );
             }
 

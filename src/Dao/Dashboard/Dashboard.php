@@ -108,13 +108,15 @@ class Dashboard extends Table
     private static function stockBajo()
     {
         $sql = "
-            SELECT
-                producto_nombre,
-                producto_stock
-            FROM productos
-            WHERE producto_stock <= 5
-            ORDER BY producto_stock ASC;
-        ";
+        SELECT
+            producto_id,
+            producto_nombre,
+            producto_stock
+        FROM productos
+        WHERE producto_estado = 'ACT'
+        AND producto_stock <= 5
+        ORDER BY producto_stock ASC;
+    ";
 
         return self::obtenerRegistros($sql, []);
     }

@@ -12,13 +12,20 @@
 
     <hr>
 
-    <div class="row">
+    <div class="row funciones-roles-container">
 
-        <div class="col-md-6">
+        <div class="col-md-6 funciones-columna">
 
             <h3>Funciones Asignadas</h3>
 
-            <table class="table table-bordered table-striped">
+            <label for="buscarAsignadas">
+                Buscar
+            </label>
+
+            <input type="text" id="buscarAsignadas" class="form-control mb-2" placeholder="Buscar función..."
+                autocomplete="off">
+
+            <table id="tablaAsignadas" class="table table-bordered table-striped">
 
                 <thead>
 
@@ -66,11 +73,18 @@
 
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-6 funciones-columna">
 
             <h3>Funciones Disponibles</h3>
 
-            <table class="table table-bordered table-striped">
+            <label for="buscarDisponibles">
+                Buscar
+            </label>
+
+            <input type="text" id="buscarDisponibles" class="form-control mb-2" placeholder="Buscar función..."
+                autocomplete="off">
+
+            <table id="tablaDisponibles" class="table table-bordered table-striped">
 
                 <thead>
 
@@ -129,3 +143,95 @@
     </a>
 
 </section>
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+
+        function activarBuscador(inputId, tablaId) {
+
+            const buscador =
+                document.getElementById(inputId);
+
+
+            const filas =
+                document.querySelectorAll(
+                    "#" + tablaId + " tbody tr"
+                );
+
+
+            if (!buscador) {
+                return;
+            }
+
+
+            buscador.addEventListener(
+                "input",
+                function () {
+
+                    const texto =
+                        this.value.toLowerCase().trim();
+
+
+                    filas.forEach(function (fila) {
+
+                        const contenido =
+                            fila.textContent.toLowerCase();
+
+
+                        fila.style.display =
+                            contenido.includes(texto)
+                                ? ""
+                                : "none";
+
+                    });
+
+                }
+            );
+
+        }
+
+
+        activarBuscador(
+            "buscarAsignadas",
+            "tablaAsignadas"
+        );
+
+
+        activarBuscador(
+            "buscarDisponibles",
+            "tablaDisponibles"
+        );
+
+
+    });
+
+</script>
+
+<style>
+    .funciones-roles-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 40px;
+    }
+
+
+    .funciones-columna {
+        flex: 1;
+    }
+
+
+    .funciones-columna table {
+        width: 100%;
+    }
+
+
+    @media (max-width: 768px) {
+
+        .funciones-roles-container {
+            flex-direction: column;
+        }
+
+    }
+</style>

@@ -7,6 +7,7 @@ use Dao\Carrito\Carrito as CarritoDao;
 use Utilities\Context;
 use Utilities\PayPal\PayPalRestApi;
 use Utilities\PayPal\PayPalOrder;
+use Utilities\Bitacora;
 use Utilities\Site;
 use Views\Renderer;
 use Dao\Reservas\Reservas as ReservasDao;
@@ -30,7 +31,11 @@ class Checkout extends PublicController
             $carrito = CarritoDao::getCart();
 
             if (empty($carrito)) {
-                Site::redirectTo("index.php?page=Carrito_Carrito");
+                Site::redirectTo(
+                    "index.php?page=Carrito_Carrito"
+                );
+
+                return;
             }
 
             $usercod = Security::getUserId();
@@ -50,6 +55,18 @@ class Checkout extends PublicController
                     >
                     $stockDisponible
                 ) {
+
+                    $_SESSION["cart_message"] =
+                        "La compra no puede continuar porque el producto '{$producto["producto_nombre"]}' ya no tiene stock suficiente.";
+
+                    Bitacora::registrar(
+                        "Checkout",
+                        "Compra rechazada por falta de stock",
+                        "Producto: " . $producto["producto_nombre"] .
+                            " solicitado: " . $producto["cantidad"] .
+                            " disponible: " . $stockDisponible,
+                        "WAR"
+                    );
 
                     Site::redirectTo(
                         "index.php?page=Carrito_Carrito"
@@ -109,9 +126,19 @@ class Checkout extends PublicController
             );
 
             if (!isset($response->id)) {
+
+                Bitacora::registrar(
+                    "Checkout",
+                    "No se pudo crear la orden de pago",
+                    "PayPal no devolvió un ID de orden.",
+                    "ERR"
+                );
+
                 Site::redirectTo(
                     "index.php?page=Checkout_Error"
                 );
+
+                return;
             }
 
             $_SESSION["orderid"] = $response->id;

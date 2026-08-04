@@ -7,6 +7,7 @@ use Dao\Security\Roles as RolesDAO;
 use Views\Renderer;
 use Utilities\Site;
 use Utilities\Validators;
+use Utilities\Bitacora;
 
 class Rol extends PrivateController
 {
@@ -51,7 +52,6 @@ class Rol extends PrivateController
                 "security/rol",
                 $this->viewData
             );
-
         } catch (\Exception $e) {
 
             Site::redirectToWithMsg(
@@ -78,8 +78,8 @@ class Rol extends PrivateController
 
         $this->readonly =
             $this->mode === "DEL"
-                ? "readonly"
-                : "";
+            ? "readonly"
+            : "";
 
 
         $this->showCommitBtn =
@@ -141,7 +141,6 @@ class Rol extends PrivateController
 
                 $errors["rolescod_error"] =
                     "El código es obligatorio";
-
             } else {
 
                 $existing =
@@ -209,7 +208,15 @@ class Rol extends PrivateController
                     $this->rol["rolesest"]
                 );
 
-            break;
+                Bitacora::registrar(
+                    "Seguridad",
+                    "Rol creado",
+                    "Código: " . $this->rol["rolescod"] .
+                        " Descripción: " . $this->rol["rolesdsc"],
+                    "LOG"
+                );
+
+                break;
 
 
             case "UPD":
@@ -220,7 +227,13 @@ class Rol extends PrivateController
                     $this->rol["rolesest"]
                 );
 
-            break;
+                RolesDAO::updateRol(
+                    $this->rol["rolescod"],
+                    $this->rol["rolesdsc"],
+                    $this->rol["rolesest"]
+                );
+
+                break;
 
 
             case "DEL":
@@ -229,7 +242,14 @@ class Rol extends PrivateController
                     $this->rol["rolescod"]
                 );
 
-            break;
+                Bitacora::registrar(
+                    "Seguridad",
+                    "Rol eliminado",
+                    "Código: " . $this->rol["rolescod"],
+                    "WAR"
+                );
+
+                break;
         }
 
 

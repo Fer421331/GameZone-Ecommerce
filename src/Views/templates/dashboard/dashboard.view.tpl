@@ -125,7 +125,7 @@
                     <td style="text-align:right;">
                         L {{producto_precio}}
                     </td>
-                    <td style="text-align:center;">
+                    <td style="text-align:center;color:white;font-weight:bold;">
                         {{producto_stock}}
                     </td>
                 </tr>
@@ -224,7 +224,7 @@
                 <tr>
                     <td>{{producto_nombre}}</td>
 
-                    <td style="text-align:center;">
+                    <td style="text-align:center;color:red;font-weight:bold;">
                         {{producto_stock}}
                     </td>
                 </tr>
@@ -248,9 +248,9 @@
     </section>
 
     <hr>
-        <a href="index.php?page=Menu_Menu" class="btn btn-secondary">
-            Regresar
-        </a>
+    <a href="index.php?page=Menu_Menu" class="btn btn-secondary">
+        Regresar
+    </a>
     </hr>
 
 </div>

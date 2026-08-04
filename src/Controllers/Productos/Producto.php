@@ -5,6 +5,7 @@ namespace Controllers\Productos;
 use Controllers\PrivateController;
 use Dao\Productos\Productos as ProductosDao;
 use Utilities\Site;
+use Utilities\Bitacora;
 use Views\Renderer;
 
 class Producto extends PrivateController
@@ -110,7 +111,7 @@ class Producto extends PrivateController
         $this->producto["producto_id"] =
             trim(
                 $_POST["producto_id"]
-                ?? $this->producto["producto_id"]
+                    ?? $this->producto["producto_id"]
             );
 
         $this->producto["categoria_id"] =
@@ -301,8 +302,8 @@ class Producto extends PrivateController
     {
         $plataformaId =
             $this->producto["plataforma_id"] === ""
-                ? null
-                : intval($this->producto["plataforma_id"]);
+            ? null
+            : intval($this->producto["plataforma_id"]);
 
         if ($this->mode === "INS") {
             $success = ProductosDao::insertProducto(
@@ -320,6 +321,15 @@ class Producto extends PrivateController
             );
 
             $message = "Producto agregado correctamente.";
+
+            if ($success) {
+                Bitacora::registrar(
+                    "Productos",
+                    "Producto insertado",
+                    "Producto: " . $this->producto["producto_nombre"],
+                    "LOG"
+                );
+            }
         } elseif ($this->mode === "UPD") {
             $success = ProductosDao::updateProducto(
                 intval($this->producto["producto_id"]),
@@ -337,6 +347,15 @@ class Producto extends PrivateController
             );
 
             $message = "Producto actualizado correctamente.";
+
+            if ($success) {
+                Bitacora::registrar(
+                    "Productos",
+                    "Producto modificado",
+                    "Producto ID: " . $this->producto["producto_id"],
+                    "LOG"
+                );
+            }
         } else {
             throw new \Exception(
                 "La operación solicitada no es válida."
@@ -379,6 +398,13 @@ class Producto extends PrivateController
             );
         }
 
+        Bitacora::registrar(
+            "Productos",
+            "Producto eliminado",
+            "Producto ID: " . $productoId,
+            "LOG"
+        );
+
         Site::redirectToWithMsg(
             "index.php?page=Productos_Productos",
             "Producto desactivado correctamente."
@@ -401,8 +427,8 @@ class Producto extends PrivateController
             $categoria["selected"] =
                 intval($categoria["categoria_id"]) ===
                 intval($this->producto["categoria_id"])
-                    ? "selected"
-                    : "";
+                ? "selected"
+                : "";
 
             $categoria["categoria_nombre"] =
                 $this->escape($categoria["categoria_nombre"]);
@@ -413,8 +439,8 @@ class Producto extends PrivateController
             $marca["selected"] =
                 intval($marca["marca_id"]) ===
                 intval($this->producto["marca_id"])
-                    ? "selected"
-                    : "";
+                ? "selected"
+                : "";
 
             $marca["marca_nombre"] =
                 $this->escape($marca["marca_nombre"]);
@@ -425,23 +451,19 @@ class Producto extends PrivateController
             $plataforma["selected"] =
                 intval($plataforma["plataforma_id"]) ===
                 intval($this->producto["plataforma_id"])
-                    ? "selected"
-                    : "";
+                ? "selected"
+                : "";
 
             $plataforma["plataforma_nombre"] =
                 $this->escape($plataforma["plataforma_nombre"]);
         }
         unset($plataforma);
 
-        $this->producto[
-            "estado_" .
-            strtolower($this->producto["producto_estado"])
-        ] = "selected";
+        $this->producto["estado_" .
+            strtolower($this->producto["producto_estado"])] = "selected";
 
-        $this->producto[
-            "web_" .
-            strtolower($this->producto["producto_activo_web"])
-        ] = "selected";
+        $this->producto["web_" .
+            strtolower($this->producto["producto_activo_web"])] = "selected";
 
         $this->viewData = array_merge(
             $this->viewData,

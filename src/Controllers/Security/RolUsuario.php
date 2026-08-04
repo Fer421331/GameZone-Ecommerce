@@ -6,6 +6,7 @@ use Controllers\PrivateController;
 use Views\Renderer;
 use Dao\Security\Security as SecurityDAO;
 use Utilities\Site;
+use Utilities\Bitacora;
 
 class RolUsuario extends PrivateController
 {
@@ -43,8 +44,16 @@ class RolUsuario extends PrivateController
                     $_POST["rolescod"]
                 );
 
+                Bitacora::registrar(
+                    "Seguridad",
+                    "Rol asignado a usuario",
+                    "Usuario: " . $this->usercod .
+                        " Rol: " . $_POST["rolescod"],
+                    "LOG"
+                );
+
                 Site::redirectTo(
-                    "index.php?page=Security_RolUsuario&usercod=".$this->usercod
+                    "index.php?page=Security_RolUsuario&usercod=" . $this->usercod
                 );
             }
 
@@ -55,8 +64,16 @@ class RolUsuario extends PrivateController
                     $_POST["rolescod"]
                 );
 
+                Bitacora::registrar(
+                    "Seguridad",
+                    "Rol removido de usuario",
+                    "Usuario: " . $this->usercod .
+                        " Rol: " . $_POST["rolescod"],
+                    "WAR"
+                );
+
                 Site::redirectTo(
-                    "index.php?page=Security_RolUsuario&usercod=".$this->usercod
+                    "index.php?page=Security_RolUsuario&usercod=" . $this->usercod
                 );
             }
         }

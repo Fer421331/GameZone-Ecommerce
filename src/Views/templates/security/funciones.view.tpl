@@ -15,21 +15,13 @@
                         Descripción
                     </label>
 
-                    <input class="col-9"
-                        type="text"
-                        name="partialName"
-                        id="partialName"
-                        value="{{partialName}}" />
-
-
+                    <input class="col-9" type="text" name="partialName" id="buscarFuncion" value="{{partialName}}" />
 
                     <label class="col-3" for="status">
                         Estado
                     </label>
 
-                    <select class="col-9"
-                        name="status"
-                        id="status">
+                    <select class="col-9" name="status" id="status">
 
                         <option value="">
                             Todos
@@ -65,7 +57,7 @@
 <br>
 <section class="WWList">
 
-    <table>
+    <table id="tablaFunciones">
 
         <thead>
 
@@ -165,9 +157,39 @@
 
 
     <hr>
-        <a href="index.php?page=Menu_Menu" class="btn btn-secondary">
-            Regresar
-        </a>
+    <a href="index.php?page=Menu_Menu" class="btn btn-secondary">
+        Regresar
+    </a>
     </hr>
 
 </section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const buscador = document.getElementById("buscarFuncion");
+        const filas = document.querySelectorAll("#tablaFunciones tbody tr");
+
+        if (!buscador) {
+            return;
+        }
+
+        buscador.addEventListener("input", function () {
+
+            const texto = this.value.toLowerCase().trim();
+
+            filas.forEach(function (fila) {
+
+                const contenido = fila.textContent.toLowerCase();
+
+                fila.style.display =
+                    contenido.includes(texto)
+                        ? ""
+                        : "none";
+
+            });
+
+        });
+
+    });
+</script>

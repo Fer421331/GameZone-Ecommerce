@@ -1,6 +1,26 @@
 <h1>Usuarios del Sistema</h1>
 
-<table class="table">
+<section class="grid">
+
+    <div class="row">
+
+        <div class="col-8 row">
+
+            <label class="col-3">
+                Buscar
+            </label>
+
+            <input class="col-9" type="text" id="buscarUsuario" placeholder="Buscar..." autocomplete="off">
+
+        </div>
+
+    </div>
+
+</section>
+
+<br>
+
+<table class="table" id="tablaUsuarios">
     <thead>
         <tr>
             <th>ID</th>
@@ -31,9 +51,70 @@
     </tbody>
 
 </table>
-
+{{pagination}}
 <hr>
-    <a href="index.php?page=Menu_Menu" class="btn btn-secondary">
-        Regresar
-    </a>
+<a href="index.php?page=Menu_Menu" class="btn btn-secondary">
+    Regresar
+</a>
 </hr>
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+
+        const buscador =
+            document.getElementById(
+                "buscarUsuario"
+            );
+
+
+        const filas =
+            document.querySelectorAll(
+                "#tablaUsuarios tbody tr"
+            );
+
+
+
+        if (!buscador) {
+            return;
+        }
+
+
+
+        buscador.addEventListener(
+            "input",
+            function () {
+
+
+                const texto =
+                    this.value
+                        .toLowerCase()
+                        .trim();
+
+
+
+                filas.forEach(function (fila) {
+
+
+                    const contenido =
+                        fila.textContent
+                            .toLowerCase();
+
+
+
+                    fila.style.display =
+                        contenido.includes(texto)
+                            ? ""
+                            : "none";
+
+
+                });
+
+
+            }
+        );
+
+
+    });
+
+</script>

@@ -5,6 +5,7 @@ namespace Controllers\Carrito;
 use Controllers\PrivateController;
 use Dao\Carrito\Carrito as CarritoDao;
 use Utilities\Site;
+use Utilities\Bitacora;
 use Views\Renderer;
 
 class Carrito extends PrivateController
@@ -25,9 +26,23 @@ class Carrito extends PrivateController
 
                 if ($productoId > 0) {
 
-                    CarritoDao::addProducto(
-                        $productoId
-                    );
+                    if (CarritoDao::addProducto($productoId)) {
+
+                        Bitacora::registrar(
+                            "Carrito",
+                            "Producto agregado al carrito",
+                            "Producto ID: " . $productoId,
+                            "LOG"
+                        );
+                    } else {
+
+                        Bitacora::registrar(
+                            "Carrito",
+                            "Intento fallido de agregar producto al carrito",
+                            "Producto ID: " . $productoId,
+                            "WAR"
+                        );
+                    }
                 }
 
                 Site::redirectTo(
@@ -44,9 +59,15 @@ class Carrito extends PrivateController
 
                 if ($productoId > 0) {
 
-                    CarritoDao::removeProducto(
-                        $productoId
-                    );
+                    if (CarritoDao::removeProducto($productoId)) {
+
+                        Bitacora::registrar(
+                            "Carrito",
+                            "Producto eliminado del carrito",
+                            "Producto ID: " . $productoId,
+                            "LOG"
+                        );
+                    }
                 }
 
                 Site::redirectTo(
@@ -58,6 +79,13 @@ class Carrito extends PrivateController
             case "CLEAR":
 
                 CarritoDao::clearCart();
+
+                Bitacora::registrar(
+                    "Carrito",
+                    "Carrito vaciado",
+                    "Usuario limpió todos los productos del carrito",
+                    "LOG"
+                );
 
                 Site::redirectTo(
                     "index.php?page=Carrito_Carrito"
@@ -76,10 +104,30 @@ class Carrito extends PrivateController
                         $cantidades as $productoId => $cantidad
                     ) {
 
-                        CarritoDao::updateCantidad(
-                            intval($productoId),
-                            intval($cantidad)
-                        );
+                        if (
+                            CarritoDao::updateCantidad(
+                                intval($productoId),
+                                intval($cantidad)
+                            )
+                        ) {
+
+                            Bitacora::registrar(
+                                "Carrito",
+                                "Cantidad de producto modificada",
+                                "Producto ID: " . $productoId .
+                                    " nueva cantidad: " . $cantidad,
+                                "LOG"
+                            );
+                        } else {
+
+                            Bitacora::registrar(
+                                "Carrito",
+                                "Intento fallido de modificar cantidad",
+                                "Producto ID: " . $productoId .
+                                    " cantidad solicitada: " . $cantidad,
+                                "WAR"
+                            );
+                        }
                     }
                 }
 

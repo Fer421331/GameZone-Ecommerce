@@ -195,7 +195,7 @@
 
                 </button>
 
-                <a href="index.php?page=Checkout_Checkout" class="btn btn-success">
+                <a href="index.php?page=checkout_checkout" class="btn btn-success">
 
                     Proceder al Pago
 

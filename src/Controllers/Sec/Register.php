@@ -4,6 +4,7 @@ namespace Controllers\Sec;
 
 use Controllers\PublicController;
 use \Utilities\Validators;
+use Utilities\Bitacora;
 use Exception;
 
 class Register extends PublicController
@@ -31,13 +32,20 @@ class Register extends PublicController
 
             if (!$this->hasErrors) {
 
-                
+
                 $usuarioExiste = \Dao\Security\Security::getUsuarioByEmail($this->txtEmail);
 
                 if ($usuarioExiste) {
 
                     $this->errorEmail = "Este correo ya se encuentra registrado.";
                     $this->hasErrors = true;
+
+                    Bitacora::registrar(
+                        "Registro",
+                        "Intento de registro fallido",
+                        "Correo ya registrado: " . $this->txtEmail,
+                        "WAR"
+                    );
                 }
 
                 if (!$this->hasErrors) {
@@ -45,6 +53,13 @@ class Register extends PublicController
                     try {
 
                         if (\Dao\Security\Security::newUsuario($this->txtEmail, $this->txtPswd)) {
+
+                            Bitacora::registrar(
+                                "Registro",
+                                "Usuario registrado correctamente",
+                                "Correo: " . $this->txtEmail,
+                                "INS"
+                            );
 
                             \Utilities\Site::redirectToWithMsg(
                                 "index.php?page=sec_login",

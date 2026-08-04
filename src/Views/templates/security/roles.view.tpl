@@ -1,64 +1,38 @@
 <h1>Roles</h1>
+<br>
 
 <section class="grid">
+
     <div class="row">
-        <form class="col-12 col-m-8" action="index.php" method="get">
+
+        <div class="col-12">
+
             <div class="flex align-center">
+
                 <div class="col-8 row">
 
-                    <input type="hidden" name="page" value="Security_Roles">
-
-                    <label class="col-3" for="partialName">
-                        Descripción
+                    <label class="col-3" for="buscarRoles">
+                        Buscar
                     </label>
 
-                    <input class="col-9"
-                        type="text"
-                        name="partialName"
-                        id="partialName"
-                        value="{{partialName}}" />
-
-
-                    <label class="col-3" for="status">
-                        Estado
-                    </label>
-
-                    <select class="col-9"
-                        name="status"
-                        id="status">
-
-                        <option value="">
-                            Todos
-                        </option>
-
-                        <option value="ACT">
-                            Activo
-                        </option>
-
-                        <option value="INA">
-                            Inactivo
-                        </option>
-
-                    </select>
+                    <input class="col-9" type="text" id="buscarRoles" placeholder="Buscar rol..." autocomplete="off">
 
                 </div>
 
-
-                <div class="col-4 align-end">
-                    <button type="submit">
-                        Filtrar
-                    </button>
-                </div>
-                <br>
             </div>
-        </form>
+
+        </div>
+
     </div>
+
 </section>
+
+<br>
 
 
 <section class="WWList">
 
-    <table>
+    <table id="tablaRoles">
 
         <thead>
 
@@ -137,9 +111,55 @@
 
 
     <hr>
-        <a href="index.php?page=Menu_Menu" class="btn btn-secondary">
-            Regresar
-        </a>
+    <a href="index.php?page=Menu_Menu" class="btn btn-secondary">
+        Regresar
+    </a>
     </hr>
 
 </section>
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const buscador =
+            document.getElementById("buscarRoles");
+
+        const filas =
+            document.querySelectorAll(
+                "#tablaRoles tbody tr"
+            );
+
+
+        if (!buscador) {
+            return;
+        }
+
+
+        buscador.addEventListener(
+            "input",
+            function () {
+
+                const texto =
+                    this.value.toLowerCase().trim();
+
+
+                filas.forEach(function (fila) {
+
+                    const contenido =
+                        fila.textContent.toLowerCase();
+
+
+                    fila.style.display =
+                        contenido.includes(texto)
+                            ? ""
+                            : "none";
+
+                });
+
+            }
+        );
+
+    });
+
+</script>

@@ -7,6 +7,7 @@ use Dao\Carrito\Carrito as CarritoDao;
 use Dao\Ventas\Ventas as VentasDao;
 use Utilities\Security;
 use Utilities\Context;
+use Utilities\Bitacora;
 use Utilities\PayPal\PayPalRestApi;
 use Views\Renderer;
 use Dao\Reservas\Reservas as ReservasDao;
@@ -16,7 +17,11 @@ class Accept extends PublicController
 {
     public function run(): void
     {
-        $dataview = array();
+        $dataview = [
+            "mensaje" => "",
+            "venta_id" => "",
+            "productos" => []
+        ];
 
         $token = $_GET["token"] ?? "";
         $session_token = $_SESSION["orderid"] ?? "";
@@ -37,6 +42,12 @@ class Accept extends PublicController
                 $total = (float)CarritoDao::getTotal();
 
                 if (!ReservasDao::validarReservasUsuario($usercod)) {
+                    Bitacora::registrar(
+                        "Checkout",
+                        "Compra cancelada por falta de stock",
+                        "Usuario ID: " . $usercod,
+                        "WAR"
+                    );
                     $dataview["mensaje"] = "Uno o más productos ya no tienen stock disponible.";
                     $dataview["orderjson"] = json_encode(
                         $result,
@@ -74,7 +85,7 @@ class Accept extends PublicController
                         intval($producto["cantidad"])
                     );
                 }
-                
+
                 ReservasDao::confirmarReservas(
                     $usercod
                 );
@@ -86,13 +97,29 @@ class Accept extends PublicController
                     $session_token
                 );
 
-                CarritoDao::clearCart();
+                Bitacora::registrar(
+                    "Checkout",
+                    "Compra realizada correctamente",
+                    "Venta ID: " . $venta_id .
+                        " Total: $" . number_format($total, 2),
+                    "LOG"
+                );
 
+                $dataview["productos"] = $productos;
                 $dataview["mensaje"] = "Compra realizada correctamente.";
                 $dataview["venta_id"] = $venta_id;
 
+                CarritoDao::clearCart();
+
                 unset($_SESSION["orderid"]);
             } else {
+
+                Bitacora::registrar(
+                    "Checkout",
+                    "Pago no completado",
+                    "La orden de PayPal no fue aprobada. Token: " . $session_token,
+                    "WAR"
+                );
 
                 $dataview["mensaje"] = "El pago no fue completado.";
             }

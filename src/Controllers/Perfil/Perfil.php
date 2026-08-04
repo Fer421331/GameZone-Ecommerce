@@ -5,6 +5,7 @@ namespace Controllers\Perfil;
 use Controllers\PrivateController;
 use Dao\Perfil\Perfil as PerfilDao;
 use Utilities\Security;
+use Utilities\Bitacora;
 use Utilities\Site;
 use Views\Renderer;
 
@@ -59,7 +60,13 @@ class Perfil extends PrivateController
                     $usercod
                 )
             ) {
-
+                Bitacora::registrar(
+                    "Perfil",
+                    "Intento de usar correo existente",
+                    "Usuario ID: " . $usercod .
+                        " intentó actualizar con correo: " . $useremail,
+                    "WAR"
+                );
                 $this->viewData["error"] =
                     "El correo ya pertenece a otro usuario.";
             }
@@ -68,17 +75,41 @@ class Perfil extends PrivateController
             if (!isset($this->viewData["error"])) {
 
 
-                PerfilDao::updatePerfil(
-                    $usercod,
-                    $username,
-                    $useremail
-                );
+                if (
+                    PerfilDao::updatePerfil(
+                        $usercod,
+                        $username,
+                        $useremail
+                    )
+                ) {
 
+                    Bitacora::registrar(
+                        "Perfil",
+                        "Perfil actualizado",
+                        "Usuario ID: " . $usercod .
+                            " actualizó nombre de usuario y correo.",
+                        "LOG"
+                    );
 
-                Site::redirectToWithMsg(
-                    "index.php?page=Perfil_Perfil",
-                    "Perfil actualizado correctamente."
-                );
+                    Site::redirectToWithMsg(
+                        "index.php?page=Perfil_Perfil",
+                        "Perfil actualizado correctamente."
+                    );
+
+                    return;
+                } else {
+
+                    Bitacora::registrar(
+                        "Perfil",
+                        "Error al actualizar perfil",
+                        "Usuario ID: " . $usercod .
+                            " no pudo actualizar sus datos.",
+                        "WAR"
+                    );
+
+                    $this->viewData["error"] =
+                        "No se pudieron guardar los cambios.";
+                }
 
                 return;
             }

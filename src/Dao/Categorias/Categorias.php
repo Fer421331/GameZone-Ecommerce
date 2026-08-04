@@ -6,21 +6,91 @@ use Dao\Table;
 
 class Categorias extends Table
 {
-    public static function getCategorias(): array
-    {
+    public static function getCategorias(
+        string $partialName = "",
+        string $status = "",
+        int $page = 0,
+        int $itemsPerPage = 10
+    ): array {
+
         $sql = "
-            SELECT
-                categoria_id,
-                categoria_nombre,
-                categoria_descripcion,
-                categoria_estado,
-                categoria_fecha_creacion,
-                categoria_fecha_actualizacion
-            FROM categorias
-            ORDER BY categoria_nombre;
+        SELECT
+            categoria_id,
+            categoria_nombre,
+            categoria_descripcion,
+            categoria_estado,
+            categoria_fecha_creacion,
+            categoria_fecha_actualizacion
+        FROM categorias
+    ";
+
+        $count = "
+        SELECT COUNT(*) AS total
+        FROM categorias
+    ";
+
+        $where = [];
+        $params = [];
+
+
+        if ($partialName !== "") {
+
+            $where[] = "
+            (
+                categoria_nombre LIKE :nombre
+                OR categoria_descripcion LIKE :descripcion
+            )
         ";
 
-        return self::obtenerRegistros($sql, []);
+            $params["nombre"] =
+                "%" . $partialName . "%";
+
+            $params["descripcion"] =
+                "%" . $partialName . "%";
+        }
+
+
+        if ($status !== "") {
+
+            $where[] =
+                "categoria_estado = :estado";
+
+            $params["estado"] =
+                $status;
+        }
+
+
+        if (count($where) > 0) {
+
+            $sql .= " WHERE " . implode(" AND ", $where);
+
+            $count .= " WHERE " . implode(" AND ", $where);
+        }
+
+
+        $sql .= "
+        ORDER BY categoria_nombre
+        LIMIT " . ($page * $itemsPerPage) . ",
+        " . $itemsPerPage;
+
+
+        $total =
+            self::obtenerUnRegistro(
+                $count,
+                $params
+            )["total"];
+
+
+        return [
+            "categorias" =>
+            self::obtenerRegistros(
+                $sql,
+                $params
+            ),
+
+            "total" =>
+            intval($total)
+        ];
     }
 
     public static function getCategoriaById(int $categoriaId): ?array
