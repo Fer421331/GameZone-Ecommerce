@@ -3,6 +3,7 @@
 namespace Dao\Perfil;
 
 use Dao\Table;
+use Dao\Favoritos\Favoritos as FavoritosDao;
 
 class Perfil extends Table
 {
@@ -61,7 +62,6 @@ class Perfil extends Table
 
 
         return $perfil ?: null;
-
     }
 
 
@@ -103,7 +103,6 @@ class Perfil extends Table
             ]
 
         ) > 0;
-
     }
 
 
@@ -144,7 +143,6 @@ class Perfil extends Table
         return intval(
             $resultado["total"] ?? 0
         ) > 0;
-
     }
 
 
@@ -154,76 +152,31 @@ class Perfil extends Table
     public static function getEstadisticas(
         string $usercod
     ): array {
-
-
         $estadisticas = [];
 
-
-
         $sql = "
-
-            SELECT COUNT(*) total
-
-            FROM ventas
-
-            WHERE usercod = :usercod;
-
-        ";
-
+        SELECT COUNT(*) total
+        FROM ventas
+        WHERE usercod = :usercod;
+    ";
 
         $estadisticas["compras"] = intval(
-
             self::obtenerUnRegistro(
                 $sql,
                 [
                     "usercod" => $usercod
                 ]
             )["total"] ?? 0
-
         );
 
-
-
-
-
-        $sql = "
-
-            SELECT COUNT(*) total
-
-            FROM wishlist
-
-            WHERE usercod = :usercod
-
-            AND wishlist_estado='ACT';
-
-        ";
-
-
-        $estadisticas["favoritos"] = intval(
-
-            self::obtenerUnRegistro(
-                $sql,
-                [
-                    "usercod" => $usercod
-                ]
-            )["total"] ?? 0
-
-        );
-
-
-
-
+      
+        $estadisticas["favoritos"] =
+            FavoritosDao::contarFavoritos($usercod);
 
         $estadisticas["carrito"] =
-            count(
-                $_SESSION["cart"] ?? []
-            );
-
-
+            count($_SESSION["cart"] ?? []);
 
         return $estadisticas;
-
-    }
-
+    } 
 
 }

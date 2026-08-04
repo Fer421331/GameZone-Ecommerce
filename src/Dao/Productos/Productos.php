@@ -319,64 +319,201 @@ class Productos extends Table
         return intval($resultado["total"] ?? 0) > 0;
     }
 
-    public static function getProductosPublicados(): array
-    {
+    public static function getProductosPublicados(
+        string $buscar = "",
+        int $categoria = 0,
+        string $orden = "recientes"
+    ): array {
+
+        $params = [];
+
         $sql = "
-        SELECT
-            p.producto_id,
-            p.producto_nombre,
-            p.producto_descripcion,
-            p.producto_precio,
-            p.producto_stock,
+    SELECT
+        p.producto_id,
+        p.producto_nombre,
+        p.producto_descripcion,
+        p.producto_precio,
 
-            c.categoria_nombre,
-
-            m.marca_nombre,
-
+        (
+            p.producto_stock -
             COALESCE(
-                pl.plataforma_nombre,
-                'Sin plataforma'
-            ) AS plataforma_nombre,
-
-            COALESCE(
-                img.imagen_ruta,
-                'public/img/no-image.png'
-            ) AS imagen_ruta
-
-        FROM productos p
-
-        INNER JOIN categorias c
-            ON p.categoria_id = c.categoria_id
-
-        INNER JOIN marcas m
-            ON p.marca_id = m.marca_id
-
-        LEFT JOIN plataformas pl
-            ON p.plataforma_id = pl.plataforma_id
-
-        LEFT JOIN producto_imagenes img
-            ON img.imagen_id = (
-                SELECT imagen_id
-                FROM producto_imagenes
-                WHERE producto_id = p.producto_id
-                  AND imagen_estado = 'ACT'
-                ORDER BY
-                    imagen_principal DESC,
-                    imagen_orden ASC
-                LIMIT 1
+                (
+                    SELECT SUM(r.cantidad_reservada)
+                    FROM reservas_stock r
+                    WHERE r.producto_id = p.producto_id
+                      AND r.reserva_estado = 'ACT'
+                      AND r.reserva_fecha_expiracion > NOW()
+                ),
+                0
             )
+        ) AS producto_stock,
 
-        WHERE
-            p.producto_estado = 'ACT'
-        AND
-            p.producto_activo_web = 'ACT'
+        c.categoria_nombre,
+        c.categoria_id,
 
-        ORDER BY
-            p.producto_fecha_publicacion DESC,
-            p.producto_nombre;
+        m.marca_nombre,
+
+        COALESCE(
+            pl.plataforma_nombre,
+            'Sin plataforma'
+        ) AS plataforma_nombre,
+
+        COALESCE(
+            img.imagen_ruta,
+            'public/img/no-image.png'
+        ) AS imagen_ruta
     ";
 
-        return self::obtenerRegistros($sql, []);
+        if (\Utilities\Security::isLogged()) {
+
+            $sql .= ",
+            f.favorito_id
+        ";
+
+            $params["usercod"] = \Utilities\Security::getUserId();
+        }
+
+        $sql .= "
+
+    FROM productos p
+    ";
+
+        if (\Utilities\Security::isLogged()) {
+
+            $sql .= "
+
+        LEFT JOIN favoritos f
+            ON p.producto_id = f.producto_id
+            AND f.usercod = :usercod
+
+        ";
+        }
+
+        $sql .= "
+
+    INNER JOIN categorias c
+        ON p.categoria_id = c.categoria_id
+
+    INNER JOIN marcas m
+        ON p.marca_id = m.marca_id
+
+    LEFT JOIN plataformas pl
+        ON p.plataforma_id = pl.plataforma_id
+
+    LEFT JOIN producto_imagenes img
+        ON img.imagen_id = (
+
+            SELECT imagen_id
+
+            FROM producto_imagenes
+
+            WHERE producto_id = p.producto_id
+              AND imagen_estado = 'ACT'
+
+            ORDER BY
+                imagen_principal DESC,
+                imagen_orden ASC
+
+            LIMIT 1
+        )
+
+    WHERE
+        p.producto_estado = 'ACT'
+    AND
+        p.producto_activo_web = 'ACT'
+    ";
+
+        if ($buscar != "") {
+
+            $sql .= "
+        AND p.producto_nombre LIKE :buscar
+        ";
+
+            $params["buscar"] = "%{$buscar}%";
+        }
+
+        if ($categoria > 0) {
+
+            $sql .= "
+        AND p.categoria_id = :categoria
+        ";
+
+            $params["categoria"] = $categoria;
+        }
+
+        switch ($orden) {
+
+            case "nombre_asc":
+
+                $sql .= "
+            ORDER BY
+                p.producto_nombre ASC
+            ";
+
+                break;
+
+            case "nombre_desc":
+
+                $sql .= "
+            ORDER BY
+                p.producto_nombre DESC
+            ";
+
+                break;
+
+            case "precio_asc":
+
+                $sql .= "
+            ORDER BY
+                p.producto_precio ASC
+            ";
+
+                break;
+
+            case "precio_desc":
+
+                $sql .= "
+            ORDER BY
+                p.producto_precio DESC
+            ";
+
+                break;
+
+            case "favoritos":
+
+                if (\Utilities\Security::isLogged()) {
+
+                    $sql .= "
+                AND f.favorito_id IS NOT NULL
+
+                ORDER BY
+                    p.producto_nombre ASC
+                ";
+                } else {
+
+                    $sql .= "
+                ORDER BY
+                    p.producto_nombre ASC
+                ";
+                }
+
+                break;
+
+            default:
+
+                $sql .= "
+            ORDER BY
+                p.producto_fecha_publicacion DESC,
+                p.producto_nombre
+            ";
+
+                break;
+        }
+
+        return self::obtenerRegistros(
+            $sql,
+            $params
+        );
     }
 
     public static function getProductoCatalogoById(
@@ -384,56 +521,69 @@ class Productos extends Table
     ): ?array {
 
         $sql = "
-        SELECT
-            p.producto_id,
-            p.producto_nombre,
-            p.producto_descripcion,
-            p.producto_precio,
-            p.producto_stock,
+    SELECT
+        p.producto_id,
+        p.producto_nombre,
+        p.producto_descripcion,
+        p.producto_precio,
 
-            c.categoria_nombre,
-
-            m.marca_nombre,
-
+        (
+            p.producto_stock -
             COALESCE(
-                pl.plataforma_nombre,
-                'Sin plataforma'
-            ) AS plataforma_nombre,
-
-            COALESCE(
-                img.imagen_ruta,
-                'public/img/no-image.png'
-            ) AS imagen_ruta
-
-        FROM productos p
-
-        INNER JOIN categorias c
-            ON p.categoria_id = c.categoria_id
-
-        INNER JOIN marcas m
-            ON p.marca_id = m.marca_id
-
-        LEFT JOIN plataformas pl
-            ON p.plataforma_id = pl.plataforma_id
-
-        LEFT JOIN producto_imagenes img
-            ON img.imagen_id = (
-                SELECT imagen_id
-                FROM producto_imagenes
-                WHERE producto_id = p.producto_id
-                  AND imagen_estado = 'ACT'
-                ORDER BY
-                    imagen_principal DESC,
-                    imagen_orden ASC
-                LIMIT 1
+                (
+                    SELECT SUM(r.cantidad_reservada)
+                    FROM reservas_stock r
+                    WHERE r.producto_id = p.producto_id
+                      AND r.reserva_estado = 'ACT'
+                      AND r.reserva_fecha_expiracion > NOW()
+                ),
+                0
             )
+        ) AS producto_stock,
 
-        WHERE
-            p.producto_id = :producto_id
-        AND
-            p.producto_estado = 'ACT'
-        AND
-            p.producto_activo_web = 'ACT';
+        c.categoria_nombre,
+
+        m.marca_nombre,
+
+        COALESCE(
+            pl.plataforma_nombre,
+            'Sin plataforma'
+        ) AS plataforma_nombre,
+
+        COALESCE(
+            img.imagen_ruta,
+            'public/img/no-image.png'
+        ) AS imagen_ruta
+
+    FROM productos p
+
+    INNER JOIN categorias c
+        ON p.categoria_id = c.categoria_id
+
+    INNER JOIN marcas m
+        ON p.marca_id = m.marca_id
+
+    LEFT JOIN plataformas pl
+        ON p.plataforma_id = pl.plataforma_id
+
+    LEFT JOIN producto_imagenes img
+        ON img.imagen_id = (
+            SELECT imagen_id
+            FROM producto_imagenes
+            WHERE producto_id = p.producto_id
+              AND imagen_estado = 'ACT'
+            ORDER BY
+                imagen_principal DESC,
+                imagen_orden ASC
+            LIMIT 1
+        )
+
+    WHERE
+        p.producto_id = :producto_id
+    AND
+        p.producto_estado = 'ACT'
+    AND
+        p.producto_activo_web = 'ACT';
     ";
 
         $producto = self::obtenerUnRegistro(
@@ -444,5 +594,64 @@ class Productos extends Table
         );
 
         return $producto ?: null;
+    }
+
+    public static function getStockDisponible(
+        int $productoId
+    ): int {
+
+        $producto = self::getProductoById($productoId);
+
+        if (!$producto) {
+            return 0;
+        }
+
+        $sql = "
+    SELECT
+        COALESCE(
+            SUM(cantidad_reservada),
+            0
+        ) AS reservado
+
+    FROM reservas_stock
+
+    WHERE producto_id = :producto_id
+      AND reserva_estado = 'ACT'
+      AND reserva_fecha_expiracion > NOW();
+    ";
+
+        $reservas = self::obtenerUnRegistro(
+            $sql,
+            [
+                "producto_id" => $productoId
+            ]
+        );
+
+        return intval($producto["producto_stock"])
+            - intval($reservas["reservado"] ?? 0);
+    }
+
+    public static function descontarStock(
+        int $productoId,
+        int $cantidad
+    ): bool {
+
+        $sql = "
+    UPDATE productos
+    SET
+        producto_stock = producto_stock - :cantidad,
+        producto_fecha_actualizacion = CURRENT_TIMESTAMP
+
+    WHERE producto_id = :producto_id
+      AND producto_stock >= :cantidad;
+    ";
+
+        return self::executeNonQuery(
+            $sql,
+            [
+                "producto_id" => $productoId,
+                "cantidad" => $cantidad
+            ]
+        ) > 0;
     }
 }

@@ -15,6 +15,8 @@
 
         <div class="hero-buttons">
 
+            {{ifnot login}}
+
             <a href="index.php?page=Sec_Login" class="btn">
                 <i class="fas fa-sign-in-alt"></i>
                 Iniciar Sesión
@@ -24,6 +26,17 @@
                 <i class="fas fa-user-plus"></i>
                 Crear Cuenta
             </a>
+
+            {{endifnot login}}
+
+            {{if login}}
+
+            <a href="index.php?page=Catalogo_Catalogo" class="btn primary">
+                <i class="fas fa-gamepad"></i>
+                Explorar Catálogo
+            </a>
+
+            {{endif login}}
 
         </div>
 
@@ -122,10 +135,7 @@
 
             <div class="product-image">
 
-                <img 
-                    src="{{imagen_ruta}}" 
-                    alt="{{producto_nombre}}"
-                >
+                <img src="{{imagen_ruta}}" alt="{{producto_nombre}}">
 
             </div>
 
@@ -170,9 +180,7 @@
 
                 <div class="product-actions">
 
-                    <a 
-                    href="index.php?page=Catalogo_Catalogo"
-                    class="btn btn-secondary">
+                    <a href="index.php?page=Catalogo_Catalogo" class="btn btn-secondary">
 
                         Ver catálogo
 
@@ -195,9 +203,7 @@
 
     <div style="text-align:center; margin-top:30px;">
 
-        <a 
-        href="index.php?page=Catalogo_Catalogo"
-        class="btn primary">
+        <a href="index.php?page=Catalogo_Catalogo" class="btn primary">
 
             Ver todos los videojuegos
 

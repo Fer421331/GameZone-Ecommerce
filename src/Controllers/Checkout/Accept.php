@@ -9,6 +9,8 @@ use Utilities\Security;
 use Utilities\Context;
 use Utilities\PayPal\PayPalRestApi;
 use Views\Renderer;
+use Dao\Reservas\Reservas as ReservasDao;
+use Dao\Productos\Productos as ProductosDao;
 
 class Accept extends PublicController
 {
@@ -34,6 +36,21 @@ class Accept extends PublicController
                 $productos = CarritoDao::getCart();
                 $total = (float)CarritoDao::getTotal();
 
+                if (!ReservasDao::validarReservasUsuario($usercod)) {
+                    $dataview["mensaje"] = "Uno o más productos ya no tienen stock disponible.";
+                    $dataview["orderjson"] = json_encode(
+                        $result,
+                        JSON_PRETTY_PRINT
+                    );
+
+                    Renderer::render(
+                        "paypal/accept",
+                        $dataview
+                    );
+
+                    return;
+                }
+
                 $metodo_pago_id = VentasDao::getMetodoPagoId("PayPal");
 
                 $venta_id = VentasDao::crearVenta(
@@ -46,11 +63,21 @@ class Accept extends PublicController
                 );
 
                 foreach ($productos as $producto) {
+
                     VentasDao::agregarDetalle(
                         $venta_id,
                         $producto
                     );
+
+                    ProductosDao::descontarStock(
+                        intval($producto["producto_id"]),
+                        intval($producto["cantidad"])
+                    );
                 }
+                
+                ReservasDao::confirmarReservas(
+                    $usercod
+                );
 
                 VentasDao::registrarPago(
                     $venta_id,
@@ -65,7 +92,6 @@ class Accept extends PublicController
                 $dataview["venta_id"] = $venta_id;
 
                 unset($_SESSION["orderid"]);
-
             } else {
 
                 $dataview["mensaje"] = "El pago no fue completado.";
@@ -75,7 +101,6 @@ class Accept extends PublicController
                 $result,
                 JSON_PRETTY_PRINT
             );
-
         } else {
 
             $dataview["orderjson"] = "No Order Available!!!";

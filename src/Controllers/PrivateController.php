@@ -16,7 +16,7 @@ namespace Controllers;
 /**
  * Private Access Controller Base Class
  *
- * @category Public
+ * @category Public 
  * @package  Controllers
  * @author   Orlando J Betancourth <orlando.betancourth@gmail.com>
  * @license  MIT http://
@@ -26,11 +26,14 @@ abstract class PrivateController extends PublicController
 {
     private function _isAuthorized()
     {
+        $userId = \Utilities\Security::getUserId();
+
         $isAuthorized = \Utilities\Security::isAuthorized(
-            \Utilities\Security::getUserId(),
+            $userId,
             $this->name,
-            'CTR'
+            "CTR"
         );
+
         if (!$isAuthorized) {
             throw new PrivateNoAuthException();
         }

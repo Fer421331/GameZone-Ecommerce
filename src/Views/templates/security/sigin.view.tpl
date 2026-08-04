@@ -28,3 +28,9 @@
     </section>
   </form>
 </section>
+<br>
+<section>
+  <a href="index.php?page=Sec_Login" class="btn btn-secondary">
+    ¿Ya tienes una cuenta? Entra al enlace
+  </a>
+</section>

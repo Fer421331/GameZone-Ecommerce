@@ -34,7 +34,6 @@ class Perfil extends PrivateController
 
                 $this->viewData["error"] =
                     "El nombre de usuario es obligatorio.";
-
             }
 
 
@@ -49,7 +48,6 @@ class Perfil extends PrivateController
 
                 $this->viewData["error"] =
                     "El correo no es válido.";
-
             }
 
 
@@ -64,7 +62,6 @@ class Perfil extends PrivateController
 
                 $this->viewData["error"] =
                     "El correo ya pertenece a otro usuario.";
-
             }
 
 
@@ -85,7 +82,6 @@ class Perfil extends PrivateController
 
                 return;
             }
-
         }
 
         $perfil = PerfilDao::getPerfil(
@@ -113,6 +109,10 @@ class Perfil extends PrivateController
             $perfil,
             $estadisticas
         );
+
+        $this->viewData["mostrarRol"] =
+            Security::isInRol($usercod, "1") ||
+            Security::isInRol($usercod, "4");
 
         Renderer::render(
             "perfil/perfil",

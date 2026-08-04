@@ -45,6 +45,11 @@ class Menu extends Table
                 "url" => "index.php?page=Security_FuncionesRoles"
             ],
             [
+                "titulo" => "Bitácora",
+                "descripcion" => "Ver bitácora",
+                "url" => "index.php?page=Security_Bitacora"
+            ],
+            [
                 "titulo" => "Historial",
                 "descripcion" => "Consultar historial",
                 "url" => "index.php?page=Historial_Historial"
@@ -53,7 +58,7 @@ class Menu extends Table
                 "titulo" => "Perfil",
                 "descripcion" => "Mi perfil",
                 "url" => "index.php?page=Perfil_Perfil"
-            ]
+            ],
         ];
     }
 

@@ -49,11 +49,41 @@ class Renderer
         if (is_array($global_context)) {
             $datos = array_merge($global_context, $datos);
         }
+
         //union de variables de sessión
         $datos = array_merge($_SESSION, $datos);
+
+
+        if (isset($_SESSION["login"])) {
+
+            $login = $_SESSION["login"];
+
+            $datos["login"] = $login;
+
+            $rol = $login["rol"] ?? "";
+
+            $datos["esAdmin"] = ($rol == "1");
+            $datos["esVentas"] = ($rol == "2");
+            $datos["esInvitado"] = ($rol == "3");
+            $datos["esAuditor"] = ($rol == "4");
+
+            $datos["esAdminAuditor"] =
+                $datos["esAdmin"] || $datos["esAuditor"];
+
+            $datos["esCliente"] =
+                $datos["esInvitado"];
+
+            $datos["esVentasCliente"] =
+                $datos["esVentas"] || $datos["esInvitado"];
+
+            // NUEVA LÍNEA
+            $datos["userMenu"] = \Utilities\UserMenu::getMenu();
+        }
+
         if (isset($datos["layoutFile"]) && $layoutFile === "layout.view.tpl") {
             $layoutFile = $datos["layoutFile"];
         }
+
         if (strpos($layoutFile, ".view.tpl") === false) {
             $layoutFile .= ".view.tpl";
         }
@@ -61,41 +91,63 @@ class Renderer
         $viewsPath = "src/Views/templates/";
         $fileTemplate = $vista . ".view.tpl";
         $htmlContent = "";
+
         if (file_exists($viewsPath . $layoutFile)) {
+
             $htmlContent = file_get_contents($viewsPath . $layoutFile);
+
             if (file_exists($viewsPath . $fileTemplate)) {
+
                 $tmphtml = file_get_contents($viewsPath . $fileTemplate);
+
                 $htmlContent = str_replace(
                     "{{{page_content}}}",
                     $tmphtml,
                     $htmlContent
                 );
+
                 //Cargar Otras plantillas
-                if(strpos($htmlContent, "{{include")){
+                if (strpos($htmlContent, "{{include")) {
                     $htmlContent = self::loadPartials($htmlContent);
                 }
-                //Limpiar Saltos de Pagina  
+
+                //Limpiar Saltos de Pagina
                 if (strpos($htmlContent, "<pre>")) {
                 } else {
-              /*      $htmlContent = str_replace("\n", "", $htmlContent);
-                    $htmlContent = str_replace("\r", "", $htmlContent);
-                    $htmlContent = str_replace("\t", "", $htmlContent);
-                    $htmlContent = str_replace("  ", "", $htmlContent); */
-                }  
+                    /*
+                $htmlContent = str_replace("\n", "", $htmlContent);
+                $htmlContent = str_replace("\r", "", $htmlContent);
+                $htmlContent = str_replace("\t", "", $htmlContent);
+                $htmlContent = str_replace("  ", "", $htmlContent);
+                */
+                }
+
                 //obtiene un arreglo separando lo distintos tipos de nodos
                 $template_code = self::_parseTemplate($htmlContent);
-                $htmlResult = self::_renderTemplate($template_code, $datos);
+
+                $htmlResult = self::_renderTemplate(
+                    $template_code,
+                    $datos
+                );
 
                 if ($render) {
-               if (isset($datos["USE_URLREWRITE"]) && $datos["USE_URLREWRITE"] == "1") {
-                 echo self::rewriteUrl($htmlResult);
+
+                    if (
+                        isset($datos["USE_URLREWRITE"])
+                        &&
+                        $datos["USE_URLREWRITE"] == "1"
+                    ) {
+
+                        echo self::rewriteUrl($htmlResult);
+                    } else {
+
+                        echo $htmlResult;
+                    }
                 } else {
-                 echo $htmlResult;
-                }
-                } else {
+
                     return $htmlResult;
                 }
-            } 
+            }
         }
     }
 

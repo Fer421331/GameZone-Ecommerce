@@ -86,7 +86,24 @@ class Security extends \Dao\Table
             now(), :userpswdest, :userpswdexp, :userest, :useractcod,
             now(), :usertipo);";
 
-        return self::executeNonQuery($sqlIns, $newUser);
+        $result = self::executeNonQuery($sqlIns, $newUser);
+
+        if ($result) {
+
+      
+            $usuario = self::getUsuarioByEmail($email);
+
+            if ($usuario) {
+
+              
+                self::assignRolToUser(
+                    $usuario["usercod"],
+                    "3"
+                );
+            }
+        }
+
+        return $result;
     }
 
     static public function getUsuarioByEmail($email)

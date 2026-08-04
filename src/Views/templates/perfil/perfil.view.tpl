@@ -47,6 +47,8 @@
 
 
 
+                {{if mostrarRol}}
+
                 <div class="mb-3">
 
                     <label>
@@ -57,8 +59,6 @@
 
                 </div>
 
-
-
                 <div class="mb-3">
 
                     <label>
@@ -68,6 +68,8 @@
                     <input class="form-control" readonly value="{{rolesdsc}}">
 
                 </div>
+
+                {{endif mostrarRol}}
 
 
 
@@ -145,9 +147,9 @@
     </div>
 
     <hr>
-        <a href="index.php?page=Index" class="btn btn-secondary">
-            Regresar
-        </a>
+    <a href="index.php?page=Index" class="btn btn-secondary">
+        Regresar
+    </a>
     </hr>
 
 </section>

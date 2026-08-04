@@ -2,17 +2,33 @@
 
 namespace Controllers\Catalogo;
 
-use Controllers\PrivateController;
+use Controllers\PublicController;
 use Dao\Productos\Productos as ProductosDao;
+use Dao\Favoritos\Favoritos as FavoritosDao;
+use Utilities\Security;
 use Views\Renderer;
 
-class Catalogo extends PrivateController
+class Catalogo extends PublicController
 {
     private array $viewData = [];
 
     public function run(): void
     {
-        $productos = ProductosDao::getProductosPublicados();
+        $buscar = trim($_GET["buscar"] ?? "");
+
+        $categoria = intval($_GET["categoria"] ?? 0);
+
+        $orden = $_GET["orden"] ?? "recientes";
+
+        $productos = ProductosDao::getProductosPublicados(
+            $buscar,
+            $categoria,
+            $orden
+        );
+
+        $usercod = Security::isLogged()
+            ? Security::getUserId()
+            : 0;
 
         foreach ($productos as &$producto) {
 
@@ -49,11 +65,47 @@ class Catalogo extends PrivateController
                 intval($producto["producto_stock"]) > 0
                 ? "Disponible"
                 : "Agotado";
+
+            $producto["esFavorito"] = false;
+
+            if ($usercod > 0) {
+
+                $producto["esFavorito"] =
+                    FavoritosDao::esFavorito(
+                        $usercod,
+                        $producto["producto_id"]
+                    );
+            }
         }
 
         unset($producto);
 
         $this->viewData["productos"] = $productos;
+
+
+        $this->viewData["buscar"] = $buscar;
+        $this->viewData["categoria"] = $categoria;
+        $this->viewData["orden"] = $orden;
+        $this->viewData["orden_recientes"] =
+            $orden == "recientes" ? "selected" : "";
+
+        $this->viewData["orden_nombre_asc"] =
+            $orden == "nombre_asc" ? "selected" : "";
+
+        $this->viewData["orden_nombre_desc"] =
+            $orden == "nombre_desc" ? "selected" : "";
+
+        $this->viewData["orden_precio_asc"] =
+            $orden == "precio_asc" ? "selected" : "";
+
+        $this->viewData["orden_precio_desc"] =
+            $orden == "precio_desc" ? "selected" : "";
+
+        $this->viewData["orden_favoritos"] =
+            $orden == "favoritos" ? "selected" : "";
+
+        $this->viewData["categorias"] =
+            ProductosDao::getCategoriasActivas();
 
         Renderer::render(
             "catalogo/catalogo",

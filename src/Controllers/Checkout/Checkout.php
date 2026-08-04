@@ -9,6 +9,9 @@ use Utilities\PayPal\PayPalRestApi;
 use Utilities\PayPal\PayPalOrder;
 use Utilities\Site;
 use Views\Renderer;
+use Dao\Reservas\Reservas as ReservasDao;
+use Dao\Productos\Productos as ProductosDao;
+use Utilities\Security;
 
 class Checkout extends PublicController
 {
@@ -30,11 +33,37 @@ class Checkout extends PublicController
                 Site::redirectTo("index.php?page=Carrito_Carrito");
             }
 
+            $usercod = Security::getUserId();
+
+
+            foreach ($carrito as $producto) {
+
+
+                $stockDisponible =
+                    ProductosDao::getStockDisponible(
+                        $producto["producto_id"]
+                    );
+
+
+                if (
+                    $producto["cantidad"]
+                    >
+                    $stockDisponible
+                ) {
+
+                    Site::redirectTo(
+                        "index.php?page=Carrito_Carrito"
+                    );
+
+                    return;
+                }
+            }
+
             $baseUrl =
                 sprintf(
                     "%s://%s%s",
                     isset($_SERVER["HTTPS"]) &&
-                    $_SERVER["HTTPS"] !== "off"
+                        $_SERVER["HTTPS"] !== "off"
                         ? "https"
                         : "http",
                     $_SERVER["HTTP_HOST"],
@@ -87,6 +116,15 @@ class Checkout extends PublicController
 
             $_SESSION["orderid"] = $response->id;
 
+            foreach ($carrito as $producto) {
+
+                ReservasDao::crearReserva(
+                    $producto["producto_id"],
+                    $usercod,
+                    $producto["cantidad"]
+                );
+            }
+
             foreach ($response->links as $link) {
 
                 if ($link->rel === "approve") {
@@ -96,7 +134,7 @@ class Checkout extends PublicController
                     );
                 }
             }
-            
+
             Site::redirectTo(
                 "index.php?page=Checkout_Error"
             );

@@ -33,3 +33,9 @@
     </section>
   </form>
 </section>
+<br>
+<section>
+  <a href="index.php?page=Sec_Register" class="btn btn-secondary">
+    ¿No tienes cuenta? Entra al enlace
+  </a>
+</section>

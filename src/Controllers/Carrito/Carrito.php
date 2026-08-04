@@ -73,8 +73,7 @@ class Carrito extends PrivateController
                         $_POST["cantidad"] ?? [];
 
                     foreach (
-                        $cantidades as
-                        $productoId => $cantidad
+                        $cantidades as $productoId => $cantidad
                     ) {
 
                         CarritoDao::updateCantidad(
@@ -122,6 +121,9 @@ class Carrito extends PrivateController
                 CarritoDao::getTotal(),
                 2
             );
+
+        $this->viewData["mensaje"] =
+            CarritoDao::getMensaje();
 
         Renderer::render(
             "carrito/carrito",

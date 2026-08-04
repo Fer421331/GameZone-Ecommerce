@@ -17,6 +17,7 @@
                 <p>
                     {{descripcion}}
                 </p>
+                <br>
                 <a href="{{url}}" class="btn">
                     Ingresar
                 </a>

@@ -12,6 +12,24 @@
 
     </div>
 
+    {{if mensaje}}
+
+    <div class="row">
+
+        <div class="col-12">
+
+            <div class="alert alert-warning">
+
+                {{mensaje}}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {{endif mensaje}}
+
     {{ifnot productos}}
 
     <div class="row">
@@ -35,7 +53,6 @@
     </div>
 
     {{endifnot productos}}
-
 
     {{if productos}}
 
@@ -145,7 +162,7 @@
             </tbody>
 
         </table>
-
+        <br>
         <div class="row">
 
             <div class="col-6">
@@ -193,9 +210,11 @@
     {{endif productos}}
 
     <hr>
-        <a href="index.php?page=Catalogo_Catalogo" class="btn btn-secondary">
-            Regresar
-        </a>
-    </hr>
+
+    <a href="index.php?page=Catalogo_Catalogo" class="btn btn-secondary">
+
+        Regresar
+
+    </a>
 
 </section>

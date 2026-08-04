@@ -114,7 +114,7 @@ class Ventas extends Table
                 "precio" => $producto["producto_precio"],
                 "cantidad" => $producto["cantidad"],
                 "subtotal" =>
-                    $producto["producto_precio"] *
+                $producto["producto_precio"] *
                     $producto["cantidad"]
             ]
         );
@@ -155,5 +155,28 @@ class Ventas extends Table
                 "referencia" => $referencia
             ]
         );
+    }
+
+    public static function descontarStock(
+        int $producto_id,
+        int $cantidad
+    ): bool {
+
+        $sql = "
+        UPDATE productos
+        SET
+            producto_stock = producto_stock - :cantidad,
+            producto_fecha_actualizacion = CURRENT_TIMESTAMP
+        WHERE producto_id = :producto_id
+        AND producto_stock >= :cantidad;
+    ";
+
+        return self::executeNonQuery(
+            $sql,
+            [
+                "producto_id" => $producto_id,
+                "cantidad" => $cantidad
+            ]
+        ) > 0;
     }
 }
