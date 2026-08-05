@@ -19,7 +19,37 @@
 
             <hr>
 
+            <h4>Dirección de entrega</h4>
+
+            {{if direccion}}
+
+            <p>
+                <strong>{{direccion.direccion_receptor}}</strong>
+                <br>
+
+                {{direccion.direccion_departamento}},
+                {{direccion.direccion_ciudad}}
+
+                <br>
+
+                {{direccion.direccion_detalle}}
+
+                {{if direccion.direccion_referencia}}
+
+                <br>
+                Referencia:
+                {{direccion.direccion_referencia}}
+
+                {{endif direccion.direccion_referencia}}
+
+            </p>
+
+            {{endif direccion}}
+
+            <hr>
+
             <h4>Productos comprados</h4>
+            <br>
 
             <table class="table table-striped">
 

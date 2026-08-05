@@ -55,6 +55,11 @@ class Menu extends Table
                 "url" => "index.php?page=Security_FuncionesRoles"
             ],
             [
+                "titulo" => "Rutas de Entrega",
+                "descripcion" => "Administrar rutas de entrega",
+                "url" => "index.php?page=RutasEntrega_RutasEntrega"
+            ],
+            [
                 "titulo" => "Bitácora",
                 "descripcion" => "Ver bitácora",
                 "url" => "index.php?page=Security_Bitacora"

@@ -6,8 +6,11 @@ use Dao\Table;
 
 class Ventas extends Table
 {
-    public static function getMetodoPagoId(string $nombre): int
-    {
+
+    public static function getMetodoPagoId(
+        string $nombre
+    ): int {
+
         $sql = "
             SELECT metodo_pago_id
             FROM metodos_pago
@@ -15,24 +18,31 @@ class Ventas extends Table
             LIMIT 1
         ";
 
-        $resultado = self::obtenerUnRegistro(
-            $sql,
-            [
-                "nombre" => $nombre
-            ]
-        );
+        $resultado =
+            self::obtenerUnRegistro(
+                $sql,
+                [
+                    "nombre" => $nombre
+                ]
+            );
 
-        return intval($resultado["metodo_pago_id"]);
+
+        return intval(
+            $resultado["metodo_pago_id"] ?? 0
+        );
     }
 
+
+
     public static function crearVenta(
-        int $usercod,
-        int $direccion_id,
+        string $usercod,
+        ?int $direccion_id,
         int $metodo_pago_id,
         float $subtotal,
         float $total,
         string $estado = "PEN"
     ): int {
+
 
         $sql = "
             INSERT INTO ventas
@@ -46,6 +56,7 @@ class Ventas extends Table
                 venta_total,
                 venta_estado
             )
+
             VALUES
             (
                 :usercod,
@@ -59,7 +70,9 @@ class Ventas extends Table
             )
         ";
 
+
         $conn = self::getConn();
+
 
         self::executeNonQuery(
             $sql,
@@ -74,13 +87,21 @@ class Ventas extends Table
             $conn
         );
 
-        return intval($conn->lastInsertId());
+
+        return intval(
+            $conn->lastInsertId()
+        );
     }
+
+
+
+
 
     public static function agregarDetalle(
         int $venta_id,
         array $producto
     ): bool {
+
 
         $sql = "
             INSERT INTO venta_detalle
@@ -93,6 +114,7 @@ class Ventas extends Table
                 descuento,
                 subtotal
             )
+
             VALUES
             (
                 :venta_id,
@@ -105,6 +127,7 @@ class Ventas extends Table
             )
         ";
 
+
         return self::executeNonQuery(
             $sql,
             [
@@ -114,11 +137,17 @@ class Ventas extends Table
                 "precio" => $producto["producto_precio"],
                 "cantidad" => $producto["cantidad"],
                 "subtotal" =>
-                $producto["producto_precio"] *
+                    $producto["producto_precio"]
+                    *
                     $producto["cantidad"]
             ]
         );
     }
+
+
+
+
+
 
     public static function registrarPago(
         int $venta_id,
@@ -126,6 +155,7 @@ class Ventas extends Table
         float $monto,
         string $referencia
     ): bool {
+
 
         $sql = "
             INSERT INTO pagos
@@ -136,6 +166,7 @@ class Ventas extends Table
                 pago_referencia,
                 pago_estado
             )
+
             VALUES
             (
                 :venta_id,
@@ -145,6 +176,7 @@ class Ventas extends Table
                 'APR'
             )
         ";
+
 
         return self::executeNonQuery(
             $sql,
@@ -157,26 +189,41 @@ class Ventas extends Table
         );
     }
 
-    public static function descontarStock(
-        int $producto_id,
-        int $cantidad
-    ): bool {
+
+
+
+
+
+
+    public static function getDireccionVenta(
+        int $venta_id
+    ): ?array {
+
 
         $sql = "
-        UPDATE productos
-        SET
-            producto_stock = producto_stock - :cantidad,
-            producto_fecha_actualizacion = CURRENT_TIMESTAMP
-        WHERE producto_id = :producto_id
-        AND producto_stock >= :cantidad;
-    ";
+            SELECT
+                du.*
+            FROM ventas v
 
-        return self::executeNonQuery(
-            $sql,
-            [
-                "producto_id" => $producto_id,
-                "cantidad" => $cantidad
-            ]
-        ) > 0;
+            INNER JOIN direcciones_usuario du
+                ON du.direccion_id = v.direccion_id
+
+            WHERE v.venta_id = :venta_id
+
+            LIMIT 1;
+        ";
+
+
+        $direccion =
+            self::obtenerUnRegistro(
+                $sql,
+                [
+                    "venta_id" => $venta_id
+                ]
+            );
+
+
+        return $direccion ?: null;
     }
+
 }

@@ -1,3 +1,30 @@
+{{if errorDireccion}}
+
+<div class="alert alert-warning">
+
+  {{errorDireccion}}
+
+</div>
+
+<a href="index.php?page=DireccionesUsuario_DireccionesUsuarios" class="btn btn-primary">
+
+  Agregar dirección de entrega
+
+</a>
+
+<hr>
+
+{{endif errorDireccion}}
+
+
+<a href="index.php?page=DireccionesUsuario_DireccionesUsuarios" class="btn btn-outline-primary mb-3">
+
+  Cambiar dirección de entrega
+
+</a>
+
+<hr>
+
 <h1>Confirmar compra</h1>
 
 <hr>
@@ -48,8 +75,24 @@
   ${{total}}
 </h3>
 <br>
+{{if direccion}}
 
-<form action="index.php?page=checkout_checkout" method="post">
+<h3>Dirección de entrega:</h3>
+
+<p>
+  {{direccion.direccion_receptor}}
+  <br>
+  {{direccion.direccion_departamento}},
+  {{direccion.direccion_ciudad}}
+  <br>
+  {{direccion.direccion_detalle}}
+</p>
+
+{{endif direccion}}
+<br>
+{{if puedeComprar}}
+
+<form action="index.php?page=Checkout_Checkout" method="post">
 
   <button type="submit" class="btn btn-success">
 
@@ -58,6 +101,8 @@
   </button>
 
 </form>
+
+{{endif puedeComprar}}
 
 
 <hr>

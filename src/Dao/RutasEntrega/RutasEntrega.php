@@ -13,7 +13,7 @@ class RutasEntrega extends Table
         return self::obtenerRegistros(
             $sqlstr,
             []
-        ); 
+        );
     }
 
     public static function getRutaEntregaById($id_ruta)
@@ -105,6 +105,26 @@ class RutasEntrega extends Table
             [
                 "id_ruta" => $id_ruta
             ]
+        );
+    }
+
+    public static function getRutasActivas()
+    {
+        $sqlstr = "
+        SELECT 
+            id_ruta,
+            origen,
+            destino,
+            distancia_km,
+            duracion_min
+        FROM rutas_entrega
+        WHERE estado = 'ACT'
+        ORDER BY origen, destino
+    ";
+
+        return self::obtenerRegistros(
+            $sqlstr,
+            []
         );
     }
 }

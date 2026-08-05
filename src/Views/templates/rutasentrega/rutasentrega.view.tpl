@@ -1,11 +1,11 @@
-<h1>Work With - Rutas de Entrega</h1>
+<h1>Rutas de Entrega</h1>
 
 <section class="WWList">
 
-    <a href="index.php?page=RutasEntrega_RutaEntrega&mode=INS" class="btn-primary">
+    <a href="index.php?page=RutasEntrega_RutaEntrega&mode=INS" class="btn btn-primary">
         + Nueva Ruta
     </a>
-
+    <hr>
     <table>
 
         <thead>
@@ -65,8 +65,8 @@
 
     <br>
 
-    <a href="index.php" class="btn-back">
-        Regresar al Inicio
+    <a href="index.php?page=Menu_Menu" class="btn tn-back">
+        Regresar
     </a>
 
 </section>

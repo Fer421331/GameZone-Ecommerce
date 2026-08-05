@@ -54,7 +54,7 @@ class UserMenu
             ];
         }
 
-        
+
         if (
             Security::isAuthorized(
                 $userId,
@@ -85,6 +85,19 @@ class UserMenu
             ];
         }
 
+        if (
+            Security::isAuthorized(
+                $userId,
+                "Controllers\DireccionesUsuario\DireccionesUsuarios"
+            )
+        ) {
+
+            $menu[] = [
+                "url" => "index.php?page=DireccionesUsuario_DireccionesUsuarios",
+                "icon" => "fas fa-map-marker-alt",
+                "label" => "Direcciones de entrega"
+            ];
+        }
 
         if (
             Security::isAuthorized(
