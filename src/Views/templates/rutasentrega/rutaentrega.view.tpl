@@ -68,7 +68,9 @@
 
         {{endif showCommitBtn}}
 
-        <a class="btn-back" href="index.php?page=RutasEntrega_RutasEntrega">
+        <hr>
+
+        <a class="btn btn-secondary" href="index.php?page=RutasEntrega_RutasEntrega">
             Regresar
         </a>
 

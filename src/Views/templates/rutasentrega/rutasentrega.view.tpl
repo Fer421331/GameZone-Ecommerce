@@ -2,6 +2,57 @@
 
 <section class="WWList">
 
+    <section class="grid">
+
+        <div class="row">
+
+            <form class="col-12 col-m-8" action="index.php" method="get">
+
+                <input type="hidden" name="page" value="RutasEntrega_RutasEntrega">
+
+                <div class="flex align-center">
+
+                    <div class="col-8 row">
+
+                        <label class="col-3">
+                            Buscar
+                        </label>
+
+                        <input class="col-9" type="text" id="buscarRuta" name="partialName" value="{{partialName}}"
+                            placeholder="Origen o destino">
+
+                        <label class="col-3">
+                            Estado
+                        </label>
+
+                        <select class="col-9" name="status">
+
+                            <option value="">Todos</option>
+                            <option value="ACT">Activo</option>
+                            <option value="INA">Inactivo</option>
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-4 align-end">
+
+                        <button type="submit">
+                            Filtrar
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </section>
+
+    <br>
+
     <a href="index.php?page=RutasEntrega_RutaEntrega&mode=INS" class="btn btn-primary">
         + Nueva Ruta
     </a>
@@ -63,10 +114,36 @@
 
     </table>
 
-    <br>
+    {{pagination}}
+
+    <hr>
 
     <a href="index.php?page=Menu_Menu" class="btn tn-back">
         Regresar
     </a>
 
 </section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+    const buscador = document.getElementById("buscarRuta");
+    const filas = document.querySelectorAll("table tbody tr");
+
+    buscador.addEventListener("input", function () {
+
+        const texto = this.value.toLowerCase();
+
+        filas.forEach(function (fila) {
+
+            fila.style.display =
+                fila.textContent.toLowerCase().includes(texto)
+                ? ""
+                : "none";
+
+        });
+
+    });
+
+});
+</script>
