@@ -83,6 +83,10 @@
                     ❤️ Favoritos
                 </option>
 
+                <option value="mas_populares" {{orden_mas_populares}}>
+                    Más populares
+                </option>
+
             </select>
 
         </div>

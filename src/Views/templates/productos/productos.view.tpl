@@ -89,13 +89,13 @@
 
                         <td>
                             <span class="producto-costo">
-                                L {{producto_costo}}
+                                $ {{producto_costo}}
                             </span>
                         </td>
 
                         <td>
                             <strong class="producto-precio">
-                                L {{producto_precio}}
+                                $ {{producto_precio}}
                             </strong>
                         </td>
 

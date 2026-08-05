@@ -122,7 +122,7 @@
 
 <section class="home-section catalog-home">
 
-    <h2>Productos Destacados</h2>
+    <h2>Videojuegos más populares</h2>
 
     <div class="product-grid">
 
@@ -173,7 +173,7 @@
 
                 <div class="product-price">
 
-                    L {{producto_precio}}
+                    $ {{producto_precio}}
 
                 </div>
 

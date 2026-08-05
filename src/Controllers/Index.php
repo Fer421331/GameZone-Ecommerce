@@ -43,6 +43,8 @@ class Index extends PublicController
             4
         );
 
+        $productos = ProductosDao::getProductosMasFavoritos(4);
+
 
         foreach ($productos as &$producto) {
 

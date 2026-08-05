@@ -123,7 +123,7 @@
                     <td>{{producto_nombre}}</td>
                     <td>{{categoria_nombre}}</td>
                     <td style="text-align:right;">
-                        L {{producto_precio}}
+                        $ {{producto_precio}}
                     </td>
                     <td style="text-align:center;color:white;font-weight:bold;">
                         {{producto_stock}}
@@ -178,7 +178,7 @@
                     <td>{{venta_fecha}}</td>
 
                     <td style="text-align:right;">
-                        L {{venta_total}}
+                        $ {{venta_total}}
                     </td>
 
                     <td style="text-align:center;">

@@ -60,7 +60,7 @@
 
                 <div class="product-price">
 
-                    L {{producto_precio}}
+                    $ {{producto_precio}}
 
                 </div>
 

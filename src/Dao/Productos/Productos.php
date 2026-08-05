@@ -575,6 +575,20 @@ class Productos extends Table
 
                 break;
 
+            case "mas_populares":
+
+                $sql .= "
+                ORDER BY
+                    (
+                        SELECT COUNT(*)
+                        FROM favoritos fav
+                        WHERE fav.producto_id = p.producto_id
+                    ) DESC,
+                    p.producto_nombre ASC
+                ";
+
+                break;
+
             default:
 
                 $sql .= "
@@ -729,5 +743,107 @@ class Productos extends Table
                 "cantidad" => $cantidad
             ]
         ) > 0;
+    }
+
+    public static function getProductosMasFavoritos(
+        int $limit = 4
+    ): array {
+
+        $sql = "
+
+    SELECT
+
+        p.producto_id,
+        p.producto_nombre,
+        p.producto_descripcion,
+        p.producto_precio,
+
+        c.categoria_nombre,
+
+        m.marca_nombre,
+
+        COALESCE(
+            pl.plataforma_nombre,
+            'Sin plataforma'
+        ) AS plataforma_nombre,
+
+
+        COALESCE(
+            img.imagen_ruta,
+            'public/img/no-image.png'
+        ) AS imagen_ruta,
+
+
+        COUNT(f.producto_id) AS total_favoritos
+
+
+    FROM productos p
+
+
+    INNER JOIN categorias c
+        ON p.categoria_id = c.categoria_id
+
+
+    INNER JOIN marcas m
+        ON p.marca_id = m.marca_id
+
+
+    LEFT JOIN plataformas pl
+        ON p.plataforma_id = pl.plataforma_id
+
+
+    LEFT JOIN favoritos f
+        ON p.producto_id = f.producto_id
+
+
+    LEFT JOIN producto_imagenes img
+        ON img.imagen_id = (
+
+            SELECT imagen_id
+
+            FROM producto_imagenes
+
+            WHERE producto_id = p.producto_id
+
+            AND imagen_estado = 'ACT'
+
+            ORDER BY
+                imagen_principal DESC,
+                imagen_orden ASC
+
+            LIMIT 1
+
+        )
+
+
+    WHERE
+        p.producto_estado = 'ACT'
+
+    AND
+        p.producto_activo_web = 'ACT'
+
+
+    GROUP BY
+        p.producto_id
+
+
+    ORDER BY
+
+        total_favoritos DESC,
+
+        p.producto_fecha_publicacion DESC
+
+
+    LIMIT :limit;
+
+    ";
+
+
+        return self::obtenerRegistros(
+            $sql,
+            [
+                "limit" => $limit
+            ]
+        );
     }
 }

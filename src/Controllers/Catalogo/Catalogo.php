@@ -18,7 +18,7 @@ class Catalogo extends PublicController
 
         $categoria = intval($_GET["categoria"] ?? 0);
 
-        $orden = $_GET["orden"] ?? "recientes";
+        $orden = $_GET["orden"] ?? "mas_populares";
 
         $productos = ProductosDao::getProductosPublicados(
             $buscar,
@@ -103,6 +103,9 @@ class Catalogo extends PublicController
 
         $this->viewData["orden_favoritos"] =
             $orden == "favoritos" ? "selected" : "";
+
+        $this->viewData["orden_mas_populares"] =
+            $orden == "mas_populares" ? "selected" : "";
 
         $this->viewData["categorias"] =
             ProductosDao::getCategoriasActivas();

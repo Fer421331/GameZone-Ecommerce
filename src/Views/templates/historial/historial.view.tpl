@@ -44,7 +44,7 @@
 
             <br>
 
-            <strong>Total: L {{venta_total}}</strong>
+            <strong>Total: $ {{venta_total}}</strong>
 
         </div>
         <br>
@@ -71,11 +71,11 @@
 
                         <td>{{producto_nombre}}</td>
 
-                        <td>L {{precio_unitario}}</td>
+                        <td>$ {{precio_unitario}}</td>
 
                         <td>{{cantidad}}</td>
 
-                        <td>L {{subtotal}}</td>
+                        <td>$ {{subtotal}}</td>
 
                     </tr>
 

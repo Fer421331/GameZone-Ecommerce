@@ -127,7 +127,7 @@
 
                     <td>
 
-                        L {{producto_precio}}
+                        $ {{producto_precio}}
 
                     </td>
 
@@ -140,7 +140,7 @@
 
                     <td>
 
-                        L {{subtotal}}
+                        $ {{subtotal}}
 
                     </td>
 
@@ -185,7 +185,7 @@
 
                 <h2>
 
-                    Total: L {{total}}
+                    Total: $ {{total}}
 
                 </h2>
 

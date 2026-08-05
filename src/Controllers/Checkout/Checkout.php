@@ -2,7 +2,7 @@
 
 namespace Controllers\Checkout;
 
-use Controllers\PublicController;
+use Controllers\PrivateController;
 use Dao\Carrito\Carrito as CarritoDao;
 use Utilities\Context;
 use Utilities\PayPal\PayPalRestApi;
@@ -14,7 +14,7 @@ use Dao\Reservas\Reservas as ReservasDao;
 use Dao\Productos\Productos as ProductosDao;
 use Utilities\Security;
 
-class Checkout extends PublicController
+class Checkout extends PrivateController
 {
     private array $viewData = [];
 
