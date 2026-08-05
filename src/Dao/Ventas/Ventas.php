@@ -137,7 +137,7 @@ class Ventas extends Table
                 "precio" => $producto["producto_precio"],
                 "cantidad" => $producto["cantidad"],
                 "subtotal" =>
-                    $producto["producto_precio"]
+                $producto["producto_precio"]
                     *
                     $producto["cantidad"]
             ]
@@ -226,4 +226,64 @@ class Ventas extends Table
         return $direccion ?: null;
     }
 
+    public static function getVentaById(
+        int $venta_id
+    ): ?array {
+
+        $sql = "
+        SELECT
+            v.*,
+            mp.metodo_nombre
+
+        FROM ventas v
+
+        INNER JOIN metodos_pago mp
+            ON mp.metodo_pago_id = v.metodo_pago_id
+
+        WHERE v.venta_id = :venta_id
+
+        LIMIT 1;
+    ";
+
+
+        $venta =
+            self::obtenerUnRegistro(
+                $sql,
+                [
+                    "venta_id" => $venta_id
+                ]
+            );
+
+
+        return $venta ?: null;
+    }
+
+    public static function getDetalleVenta(
+        int $venta_id
+    ): array {
+
+        $sql = "
+        SELECT
+            detalle_venta_id,
+            venta_id,
+            producto_id,
+            producto_nombre,
+            precio_unitario,
+            cantidad,
+            descuento,
+            subtotal
+
+        FROM venta_detalle
+
+        WHERE venta_id = :venta_id;
+    ";
+
+
+        return self::obtenerRegistros(
+            $sql,
+            [
+                "venta_id" => $venta_id
+            ]
+        );
+    }
 }

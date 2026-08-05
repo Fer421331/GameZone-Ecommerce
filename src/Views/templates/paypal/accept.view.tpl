@@ -24,23 +24,24 @@
             {{if direccion}}
 
             <p>
-                <strong>{{direccion.direccion_receptor}}</strong>
-                <br>
+                <strong>{{direccion_receptor}}</strong>
 
-                {{direccion.direccion_departamento}},
-                {{direccion.direccion_ciudad}}
+<br>
 
-                <br>
+{{direccion_departamento}},
+{{direccion_ciudad}}
 
-                {{direccion.direccion_detalle}}
+<br>
 
-                {{if direccion.direccion_referencia}}
+{{direccion_detalle}}
 
-                <br>
-                Referencia:
-                {{direccion.direccion_referencia}}
+{{if direccion_referencia}}
 
-                {{endif direccion.direccion_referencia}}
+<br>
+Referencia:
+{{direccion_referencia}}
+
+{{endif direccion_referencia}}
 
             </p>
 
@@ -81,10 +82,17 @@
 
             <hr>
 
+            <h4 class="text-end">
+                Total pagado:
+                ${{total}}
+            </h4>
+
+            <hr>
+
             <div class="text-center">
 
-                <a href="index.php?page=Carrito_Carrito" class="btn btn-primary">
-                    Regresar al carrito
+                <a href="index.php?page=Carrito_Carrito" class="btn btn-secondary">
+                    Volver al carrito
                 </a>
 
                 <a href="index.php?page=Catalogo_Catalogo" class="btn btn-secondary">

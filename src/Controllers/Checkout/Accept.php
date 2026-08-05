@@ -19,30 +19,45 @@ class Accept extends PublicController
 {
     public function run(): void
     {
+
         $dataview = [
             "mensaje" => "",
             "venta_id" => "",
             "productos" => [],
-            "direccion" => null
+            "direccion" => null,
+            "total" => "0.00"
         ];
 
 
-        $token = $_GET["token"] ?? "";
-        $session_token = $_SESSION["orderid"] ?? "";
+
+        $token =
+            $_GET["token"] ?? "";
 
 
-        if ($token !== "" && $token == $session_token) {
+        $session_token =
+            $_SESSION["orderid"] ?? "";
 
 
-            $paypal = new PayPalRestApi(
-                Context::getContextByKey("PAYPAL_CLIENT_ID"),
-                Context::getContextByKey("PAYPAL_CLIENT_SECRET")
-            );
+
+        if (
+            $token !== ""
+            &&
+            $token == $session_token
+        ) {
 
 
-            $result = $paypal->captureOrder(
-                $session_token
-            );
+            $paypal =
+                new PayPalRestApi(
+                    Context::getContextByKey("PAYPAL_CLIENT_ID"),
+                    Context::getContextByKey("PAYPAL_CLIENT_SECRET")
+                );
+
+
+
+            $result =
+                $paypal->captureOrder(
+                    $session_token
+                );
 
 
 
@@ -53,19 +68,39 @@ class Accept extends PublicController
             ) {
 
 
-                $usercod = Security::getUserId();
+                $usercod =
+                    Security::getUserId();
 
+
+
+                /*
+                    Carrito temporal usado
+                    solamente para construir la venta
+                */
 
                 $productos =
                     CarritoDao::getCart();
+
 
 
                 $total =
                     (float)CarritoDao::getTotal();
 
 
+
+                $dataview["total"] =
+                    number_format(
+                        $total,
+                        2
+                    );
+
+
+
+
                 $direccion_id =
                     $_SESSION["direccion_id_compra"] ?? 0;
+
+
 
 
                 $direccion =
@@ -75,7 +110,10 @@ class Accept extends PublicController
                     );
 
 
+
+
                 if (!$direccion) {
+
 
                     $dataview["mensaje"] =
                         "No se encontró una dirección de entrega.";
@@ -86,8 +124,11 @@ class Accept extends PublicController
                         $dataview
                     );
 
+
                     return;
                 }
+
+
 
 
 
@@ -107,15 +148,10 @@ class Accept extends PublicController
                     );
 
 
+
                     $dataview["mensaje"] =
                         "Uno o más productos ya no tienen stock disponible.";
 
-
-                    $dataview["orderjson"] =
-                        json_encode(
-                            $result,
-                            JSON_PRETTY_PRINT
-                        );
 
 
                     Renderer::render(
@@ -123,8 +159,12 @@ class Accept extends PublicController
                         $dataview
                     );
 
+
                     return;
                 }
+
+
+
 
 
 
@@ -133,6 +173,8 @@ class Accept extends PublicController
                     VentasDao::getMetodoPagoId(
                         "PayPal"
                     );
+
+
 
 
 
@@ -149,8 +191,26 @@ class Accept extends PublicController
                         $total,
                         "APR"
                     );
-                
-                $dataview["direccion"] = $direccion;
+
+
+
+
+                $dataview["direccion"] = true;
+
+                $dataview["direccion_receptor"] =
+                    $direccion["direccion_receptor"];
+
+                $dataview["direccion_departamento"] =
+                    $direccion["direccion_departamento"];
+
+                $dataview["direccion_ciudad"] =
+                    $direccion["direccion_ciudad"];
+
+                $dataview["direccion_detalle"] =
+                    $direccion["direccion_detalle"];
+
+                $dataview["direccion_referencia"] =
+                    $direccion["direccion_referencia"];
 
                 foreach ($productos as $producto) {
 
@@ -159,6 +219,7 @@ class Accept extends PublicController
                         $venta_id,
                         $producto
                     );
+
 
 
                     ProductosDao::descontarStock(
@@ -175,9 +236,13 @@ class Accept extends PublicController
 
 
 
+
+
                 ReservasDao::confirmarReservas(
                     $usercod
                 );
+
+
 
 
 
@@ -194,11 +259,67 @@ class Accept extends PublicController
 
 
 
+
+
+                /*
+                    Caso B:
+                    La compra mostrada sale
+                    de la venta almacenada
+                    en la base de datos
+                */
+
+                $productosVenta =
+                    VentasDao::getDetalleVenta(
+                        $venta_id
+                    );
+
+
+
+
+
+
+                foreach ($productosVenta as &$producto) {
+
+
+                    $producto["producto_precio"] =
+                        number_format(
+                            floatval(
+                                $producto["precio_unitario"]
+                            ),
+                            2
+                        );
+
+
+
+                    $producto["subtotal"] =
+                        number_format(
+                            floatval(
+                                $producto["subtotal"]
+                            ),
+                            2
+                        );
+                }
+
+
+                unset($producto);
+
+
+
+
+
+
+
+
                 Bitacora::registrar(
                     "Checkout",
                     "Compra realizada correctamente",
-                    "Venta ID: " . $venta_id .
-                        " Total: $" . number_format($total, 2),
+                    "Venta ID: " .
+                        $venta_id .
+                        " Total: $" .
+                        number_format(
+                            $total,
+                            2
+                        ),
                     "LOG"
                 );
 
@@ -206,23 +327,37 @@ class Accept extends PublicController
 
 
 
+
+
+
                 $dataview["productos"] =
-                    $productos;
+                    $productosVenta;
+
 
 
                 $dataview["mensaje"] =
                     "Compra realizada correctamente.";
 
 
+
+
                 $dataview["venta_id"] =
                     $venta_id;
 
+
+
+
+
+
+
                 CarritoDao::clearCart();
+
 
 
                 unset(
                     $_SESSION["orderid"]
                 );
+
 
                 unset(
                     $_SESSION["direccion_id_compra"]
@@ -230,18 +365,21 @@ class Accept extends PublicController
             } else {
 
 
-
                 Bitacora::registrar(
                     "Checkout",
                     "Pago no completado",
-                    "La orden de PayPal no fue aprobada. Token: " . $session_token,
+                    "La orden de PayPal no fue aprobada. Token: " .
+                        $session_token,
                     "WAR"
                 );
+
 
 
                 $dataview["mensaje"] =
                     "El pago no fue completado.";
             }
+
+
 
 
 
@@ -258,6 +396,8 @@ class Accept extends PublicController
             $dataview["orderjson"] =
                 "No Order Available!!!";
         }
+
+
 
 
 
