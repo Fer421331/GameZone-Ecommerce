@@ -25,8 +25,11 @@
             </div>
 
             <div class="productos-search">
+
                 <span>⌕</span>
+
                 <input type="text" id="buscarProducto" placeholder="Buscar producto..." autocomplete="off">
+
             </div>
         </div>
 
@@ -122,12 +125,14 @@
                                 </a>
 
                                 <a href="index.php?page=Productos_Producto&mode=UPD&producto_id={{producto_id}}"
-                                    class="producto-btn-accion producto-btn-editar btn btn-secondary" title="Editar producto">
+                                    class="producto-btn-accion producto-btn-editar btn btn-secondary"
+                                    title="Editar producto">
                                     Editar
                                 </a>
 
                                 <a href="index.php?page=Productos_Producto&mode=DEL&producto_id={{producto_id}}"
-                                    class="producto-btn-accion producto-btn-desactivar btn btn-secondary" title="Desactivar producto">
+                                    class="producto-btn-accion producto-btn-desactivar btn btn-secondary"
+                                    title="Desactivar producto">
                                     Desactivar
                                 </a>
                             </div>
@@ -138,10 +143,12 @@
             </table>
         </div>
 
+        {{pagination}}
+
         <hr>
-            <a href="index.php?page=Menu_Menu" class="btn btn-secondary">
-                Regresar
-            </a>
+        <a href="index.php?page=Menu_Menu" class="btn btn-secondary">
+            Regresar
+        </a>
         </hr>
 
     </div>
@@ -150,6 +157,7 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+
         const buscador = document.getElementById("buscarProducto");
         const filas = document.querySelectorAll("#tablaProductos tbody tr");
 
@@ -157,16 +165,33 @@
             return;
         }
 
+
         buscador.addEventListener("input", function () {
-            const texto = this.value.toLowerCase().trim();
+
+            const texto = this.value
+                .toLowerCase()
+                .trim();
+
 
             filas.forEach(function (fila) {
-                const contenido = fila.textContent.toLowerCase();
 
-                fila.style.display = contenido.includes(texto)
-                    ? ""
-                    : "none";
+
+                const nombreProducto = fila
+                    .querySelector(".producto-nombre")
+                    .textContent
+                    .toLowerCase();
+
+
+                fila.style.display =
+                    nombreProducto.includes(texto)
+                        ? ""
+                        : "none";
+
             });
+
+
         });
+
+
     });
 </script>

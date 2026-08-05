@@ -11,13 +11,14 @@ class Login extends \Controllers\PublicController
     private $errorEmail = "";
     private $errorPswd = "";
     private $generalError = "";
+    private $sessionMessage = "";
     private $hasError = false;
 
     public function run(): void
     {
         if ($this->isPostBack()) {
-            $this->txtEmail = $_POST["txtEmail"];
-            $this->txtPswd = $_POST["txtPswd"];
+            $this->txtEmail = $_POST["txtEmail"] ?? "";
+            $this->txtPswd = $_POST["txtPswd"] ?? "";
 
             if (!\Utilities\Validators::IsValidEmail($this->txtEmail)) {
                 $this->errorEmail = "¡Correo no tiene el formato adecuado!";
@@ -58,19 +59,53 @@ class Login extends \Controllers\PublicController
                             $dbUser["username"],
                             $dbUser["useremail"]
                         );
+                        $roles = \Dao\Security\Security::getRolesByUsuario(
+                            $dbUser["usercod"]
+                        );
+
+                        $irAlMenu = false;
+
+                        foreach ($roles as $rol) {
+
+                            if (
+                                $rol["rolescod"] == "1" ||
+                                $rol["rolescod"] == "2" ||
+                                $rol["rolescod"] == "4"
+                            ) {
+                                $irAlMenu = true;
+                                break;
+                            }
+                        }
+
+
+                        if ($irAlMenu) {
+
+                            \Utilities\Site::redirectTo(
+                                "index.php?page=Menu_Menu"
+                            );
+                        } else {
+
+                            \Utilities\Site::redirectTo(
+                                "index.php"
+                            );
+                        }
                         Bitacora::registrar(
                             "Login",
                             "Inicio de sesión exitoso",
                             "Usuario: " . $dbUser["useremail"],
                             "LOG"
                         );
-                        if (\Utilities\Context::getContextByKey("redirto") !== "") {
-                            \Utilities\Site::redirectTo(
-                                \Utilities\Context::getContextByKey("redirto")
-                            );
-                        } else {
-                            \Utilities\Site::redirectTo("index.php");
+                        $userId = $dbUser["usercod"];
+
+                        if (
+                            \Utilities\Security::isInRol($userId, "1") ||
+                            \Utilities\Security::isInRol($userId, "2") ||
+                            \Utilities\Security::isInRol($userId, "4")
+                        ) {
+                            \Utilities\Site::redirectTo("index.php?page=Menu_Menu");
                         }
+
+                        \Utilities\Site::redirectTo("index.php");
                     }
                 } else {
                     error_log(
@@ -88,6 +123,13 @@ class Login extends \Controllers\PublicController
                     );
                 }
             }
+        }
+        if (isset($_SESSION["sessionMessage"])) {
+
+            $this->sessionMessage =
+                $_SESSION["sessionMessage"];
+
+            unset($_SESSION["sessionMessage"]);
         }
         $dataView = get_object_vars($this);
         \Views\Renderer::render("security/login", $dataView);

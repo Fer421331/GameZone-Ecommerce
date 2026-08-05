@@ -8,7 +8,6 @@ use Dao\Favoritos\Favoritos as FavoritosDao;
 class Perfil extends Table
 {
 
-
     public static function getPerfil(
         string $usercod
     ): ?array {

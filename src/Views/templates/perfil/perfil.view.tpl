@@ -22,6 +22,8 @@
 
             <form method="post">
 
+                <input type="hidden" name="accion" value="perfil">
+
 
                 <div class="mb-3">
 
@@ -47,36 +49,8 @@
 
 
 
-                {{if mostrarRol}}
-
-                <div class="mb-3">
-
-                    <label>
-                        Tipo Usuario
-                    </label>
-
-                    <input class="form-control" readonly value="{{usertipo}}">
-
-                </div>
-
-                <div class="mb-3">
-
-                    <label>
-                        Rol
-                    </label>
-
-                    <input class="form-control" readonly value="{{rolesdsc}}">
-
-                </div>
-
-                {{endif mostrarRol}}
-
-
-
                 <button class="btn btn-primary">
-
                     Guardar cambios
-
                 </button>
 
 
@@ -96,6 +70,7 @@
     <h3>Resumen</h3>
 
 
+
     <div class="row">
 
 
@@ -104,9 +79,7 @@
             <div class="alert alert-info">
 
                 Compras:
-                <strong>
-                    {{compras}}
-                </strong>
+                <strong>{{compras}}</strong>
 
             </div>
 
@@ -119,9 +92,7 @@
             <div class="alert alert-warning">
 
                 Favoritos:
-                <strong>
-                    {{favoritos}}
-                </strong>
+                <strong>{{favoritos}}</strong>
 
             </div>
 
@@ -134,22 +105,125 @@
             <div class="alert alert-success">
 
                 Carrito:
-                <strong>
-                    {{carrito}}
-                </strong>
+                <strong>{{carrito}}</strong>
 
             </div>
 
         </div>
 
 
-
     </div>
 
+
+
     <hr>
+
+
+
+    <section class="depth-1 py-5">
+
+
+        <h2>
+            Cambiar contraseña
+        </h2>
+
+
+
+        {{if errorPassword}}
+
+        <div class="alert alert-danger">
+            {{errorPassword}}
+        </div>
+
+        {{endif errorPassword}}
+
+
+
+        {{if successPassword}}
+
+        <div class="alert alert-success">
+            {{successPassword}}
+        </div>
+
+        {{endif successPassword}}
+
+
+
+        <form method="post">
+
+
+            <input type="hidden" name="accion" value="password">
+
+
+
+            <div class="mb-3">
+
+                <label>
+                    Contraseña actual
+                </label>
+
+
+                <input type="password" name="passwordActual" class="form-control" required>
+
+            </div>
+
+
+
+
+            <div class="mb-3">
+
+                <label>
+                    Nueva contraseña
+                </label>
+
+
+                <input type="password" name="passwordNueva" class="form-control" required>
+
+            </div>
+
+
+
+
+            <div class="mb-3">
+
+                <label>
+                    Confirmar nueva contraseña
+                </label>
+
+
+                <input type="password" name="passwordConfirmar" class="form-control" required>
+
+            </div>
+
+
+
+
+            <button class="btn btn-primary" type="submit">
+
+                Cambiar contraseña
+
+            </button>
+
+
+
+        </form>
+
+
+
+    </section>
+
+
+
+    <hr>
+
+
+
     <a href="index.php?page=Index" class="btn btn-secondary">
+
         Regresar
+
     </a>
-    </hr>
+
+
 
 </section>

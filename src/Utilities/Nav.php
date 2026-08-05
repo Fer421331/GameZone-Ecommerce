@@ -40,10 +40,17 @@ class Nav
                 }
             }
 
-            if (!$esInvitado) {
-                $navigationData = self::getNavFromJson()["private"];
+            $navigationData = self::getNavFromJson()["private"];
 
-                foreach ($navigationData as $navEntry) {
+            foreach ($navigationData as $navEntry) {
+
+                if ($navEntry["id"] === "Menu_Logout") {
+
+                    $tmpNAVIGATION[] = $navEntry;
+                    continue;
+                }
+                
+                if (!$esInvitado) {
 
                     if ($esVentas) {
                         $navEntry["nav_label"] = "Menú Ventas";

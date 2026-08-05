@@ -27,15 +27,30 @@ abstract class PrivateController extends PublicController
     private function _isAuthorized()
     {
         $userId = \Utilities\Security::getUserId();
-
-        $isAuthorized = \Utilities\Security::isAuthorized(
+        $controllerAuthorized = \Utilities\Security::isAuthorized(
             $userId,
             $this->name,
             "CTR"
         );
 
-        if (!$isAuthorized) {
+        if (!$controllerAuthorized) {
             throw new PrivateNoAuthException();
+        }
+
+        if (isset($_GET["mode"])) {
+
+            $function = $this->_getCurrentFunction();
+
+            $actionAuthorized = \Utilities\Security::isAuthorized(
+                $userId,
+                $function,
+                "FNC"
+            );
+
+
+            if (!$actionAuthorized) {
+                throw new PrivateNoAuthException();
+            }
         }
     }
     private function _isAuthenticated()
@@ -54,7 +69,18 @@ abstract class PrivateController extends PublicController
     public function __construct()
     {
         parent::__construct();
+
+
+        if (
+            !\Utilities\Security::checkSessionTimeout()
+        ) {
+
+            throw new PrivateNoLoggedException();
+        }
+
+
         $this->_isAuthenticated();
+
         $this->_isAuthorized();
 
         $userId = \Utilities\Security::getUserId();
@@ -66,17 +92,43 @@ abstract class PrivateController extends PublicController
             foreach ($roles as $rol) {
                 $codigoRol = $rol["rolescod"];
 
-                if ($codigoRol == '1' || $codigoRol == '4') {
-                    $caption = "Panel administrativo";
-                    break;
-                }
+                foreach ($roles as $rol) {
 
-                if ($codigoRol == '2') {
-                    $caption = "Panel de ventas";
+                    $codigoRol = $rol["rolescod"];
+
+
+                    if ($codigoRol == '1') {
+                        $caption = "Panel administrativo";
+                        break;
+                    }
+
+
+                    if ($codigoRol == '2') {
+                        $caption = "Panel de ventas";
+                    }
+
+
+                    if ($codigoRol == '4') {
+                        $caption = "Panel de auditoría";
+                    }
                 }
             }
 
             \Utilities\Context::setContext("PANEL_CAPTION", $caption);
         }
+    }
+
+    private function _getCurrentFunction()
+    {
+        $function = $this->name;
+
+
+        if (isset($_GET["mode"]) && $_GET["mode"] !== "") {
+
+            $function .= "&mode=" . $_GET["mode"];
+        }
+
+
+        return $function;
     }
 }

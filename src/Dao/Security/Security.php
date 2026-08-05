@@ -52,11 +52,16 @@ class Security extends \Dao\Table
         return self::obtenerRegistros($sqlstr, array());
     }
 
-    static public function newUsuario($email, $password)
+    static public function newUsuario($nombre, $email, $password)
     {
         if (!\Utilities\Validators::IsValidEmail($email)) {
             throw new Exception("Correo no es válido");
         }
+
+        if (trim($nombre) === "") {
+            throw new Exception("Debe ingresar un nombre.");
+        }
+
         if (!\Utilities\Validators::IsValidPassword($password)) {
             throw new Exception("Contraseña debe ser almenos 8 caracteres, 1 número, 1 mayúscula, 1 símbolo especial");
         }
@@ -70,7 +75,7 @@ class Security extends \Dao\Table
         unset($newUser["userpswdchg"]);
 
         $newUser["useremail"] = $email;
-        $newUser["username"] = "John Doe";
+        $newUser["username"] = trim($nombre);
         $newUser["userpswd"] = $hashedPassword;
         $newUser["userpswdest"] = Estados::ACTIVO;
         $newUser["userpswdexp"] = date('Y-m-d', time() + 7776000);  //(3*30*24*60*60) (m d h mi s)
@@ -136,6 +141,43 @@ class Security extends \Dao\Table
         );
     }
 
+    static public function getUsuarioById($usercod)
+    {
+        $sql = "
+        SELECT *
+        FROM usuario
+        WHERE usercod = :usercod;
+    ";
+
+        return self::obtenerUnRegistro(
+            $sql,
+            [
+                "usercod" => $usercod
+            ]
+        );
+    }
+
+
+    static public function changePassword($usercod, $newPassword)
+    {
+        $hashedPassword = self::_hashPassword($newPassword);
+
+        $sql = "
+        UPDATE usuario
+        SET 
+            userpswd = :password,
+            userpswdchg = NOW()
+        WHERE usercod = :usercod;
+    ";
+
+        return self::executeNonQuery(
+            $sql,
+            [
+                "password" => $hashedPassword,
+                "usercod" => $usercod
+            ]
+        );
+    }
 
     static private function _usuarioStruct()
     {

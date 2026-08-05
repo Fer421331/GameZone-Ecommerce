@@ -6,32 +6,108 @@ use Dao\Table;
 
 class Productos extends Table
 {
-    public static function getProductos(): array
-    {
+    public static function getProductos(
+        int $limit = 0,
+        int $offset = 0
+    ): array {
+
+
         $sql = "
-            SELECT
-                p.producto_id,
-                p.producto_sku,
-                p.producto_nombre,
-                p.producto_costo,
-                p.producto_precio,
-                p.producto_stock,
-                p.producto_activo_web,
-                p.producto_estado,
-                c.categoria_nombre,
-                m.marca_nombre,
-                COALESCE(pl.plataforma_nombre, 'Sin plataforma') AS plataforma_nombre
-            FROM productos p
-            INNER JOIN categorias c
-                ON p.categoria_id = c.categoria_id
-            INNER JOIN marcas m
-                ON p.marca_id = m.marca_id
-            LEFT JOIN plataformas pl
-                ON p.plataforma_id = pl.plataforma_id
-            ORDER BY p.producto_id DESC;
+
+    SELECT
+
+        p.producto_id,
+        p.producto_sku,
+        p.producto_nombre,
+        p.producto_costo,
+        p.producto_precio,
+        p.producto_stock,
+        p.producto_activo_web,
+        p.producto_estado,
+
+        c.categoria_nombre,
+        m.marca_nombre,
+
+        COALESCE(
+            pl.plataforma_nombre,
+            'Sin plataforma'
+        ) AS plataforma_nombre
+
+
+    FROM productos p
+
+
+    INNER JOIN categorias c
+        ON p.categoria_id = c.categoria_id
+
+
+    INNER JOIN marcas m
+        ON p.marca_id = m.marca_id
+
+
+    LEFT JOIN plataformas pl
+        ON p.plataforma_id = pl.plataforma_id
+
+
+    ORDER BY p.producto_id DESC
+
+    ";
+
+
+
+        if ($limit > 0) {
+
+
+            $sql .= "
+
+        LIMIT :limit
+        OFFSET :offset
+
         ";
 
-        return self::obtenerRegistros($sql, []);
+
+            return self::obtenerRegistros(
+                $sql,
+                [
+                    "limit" => $limit,
+                    "offset" => $offset
+                ]
+            );
+        }
+
+
+
+        return self::obtenerRegistros(
+            $sql,
+            []
+        );
+    }
+
+
+
+    public static function getTotalProductos(): int
+    {
+
+
+        $sql = "
+
+    SELECT COUNT(*) AS total
+
+    FROM productos
+
+    ";
+
+
+
+        $resultado = self::obtenerUnRegistro(
+            $sql,
+            []
+        );
+
+
+        return intval(
+            $resultado["total"] ?? 0
+        );
     }
 
     public static function getProductoById(int $productoId): ?array

@@ -13,9 +13,14 @@
   ],
   "private": [
     {
-        "id": "Menu_Admin",
-        "nav_url": "index.php?page=Menu_Menu",
-        "nav_label": "Menú Administrativo"
+      "id": "Menu_Admin",
+      "nav_url": "index.php?page=Menu_Menu",
+      "nav_label": "Menú Administrativo"
+    },
+    {
+      "id": "Menu_Logout",
+      "nav_url": "index.php?page=Sec_Logout",
+      "nav_label": "<i class=\"fas fa-sign-out-alt\"></i>&nbsp;Cerrar sesión"
     }
   ]
 }

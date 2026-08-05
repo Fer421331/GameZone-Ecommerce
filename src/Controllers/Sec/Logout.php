@@ -8,10 +8,12 @@ class Logout extends \Controllers\PublicController
 {
     public function run(): void
     {
+        $user = \Utilities\Security::getUser();
+
         Bitacora::registrar(
             "Logout",
             "Cierre de sesión",
-            "Usuario: " . \Utilities\Security::getUser()["userEmail"],
+            "Usuario: " . ($user ? $user["userEmail"] : "Sesión expirada"),
             "LOG"
         );
         \Utilities\Security::logout();

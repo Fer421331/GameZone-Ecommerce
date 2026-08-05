@@ -6,7 +6,7 @@ class UserMenu
 {
     public static function getMenu(): array
     {
-        if (!isset($_SESSION["login"])) {
+        if (!Security::isLogged()) {
             return [];
         }
 
@@ -22,61 +22,108 @@ class UserMenu
             "label" => "Mi Perfil"
         ];
 
-        if (Security::isInRol($userId, "1") || Security::isInRol($userId, "4")) {
 
-            $menu[] = [
-                "url" => "index.php?page=Security_Bitacora",
-                "icon" => "fas fa-clipboard-list",
-                "label" => "Bitácora"
-            ];
+
+        if (
+            Security::isAuthorized(
+                $userId,
+                "Menu_Dashboard"
+            )
+        ) {
 
             $menu[] = [
                 "url" => "index.php?page=Dashboard_Dashboard",
                 "icon" => "fas fa-tachometer-alt",
                 "label" => "Dashboard"
             ];
-
-            $menu[] = [
-                "url" => "index.php?page=Favoritos_Favoritos",
-                "icon" => "fas fa-heart",
-                "label" => "Mis Favoritos"
-            ];
         }
 
-        if (Security::isInRol($userId, "2")) {
+
+
+        if (
+            Security::isAuthorized(
+                $userId,
+                "Bitacora_Menu"
+            )
+        ) {
 
             $menu[] = [
                 "url" => "index.php?page=Security_Bitacora",
                 "icon" => "fas fa-clipboard-list",
                 "label" => "Bitácora"
             ];
+        }
+
+        
+        if (
+            Security::isAuthorized(
+                $userId,
+                "Menu_Productos"
+            )
+        ) {
 
             $menu[] = [
-                "url" => "index.php?page=Dashboard_Dashboard",
-                "icon" => "fas fa-store",
-                "label" => "Dashboard"
-            ];
-
-            $menu[] = [
-                "url" => "index.php?page=Favoritos_Favoritos",
-                "icon" => "fas fa-heart",
-                "label" => "Mis Favoritos"
+                "url" => "index.php?page=Productos_Productos",
+                "icon" => "fas fa-gamepad",
+                "label" => "Productos"
             ];
         }
 
-        if (Security::isInRol($userId, "3")) {
+
+
+        if (
+            Security::isAuthorized(
+                $userId,
+                "Menu_Categorias"
+            )
+        ) {
+
+            $menu[] = [
+                "url" => "index.php?page=Categorias_Categorias",
+                "icon" => "fas fa-list",
+                "label" => "Categorías"
+            ];
+        }
+
+
+        if (
+            Security::isAuthorized(
+                $userId,
+                "Menu_Carrito"
+            )
+        ) {
 
             $menu[] = [
                 "url" => "index.php?page=Carrito_Carrito",
                 "icon" => "fas fa-shopping-cart",
                 "label" => "Mi Carrito"
             ];
+        }
+
+
+
+        if (
+            Security::isAuthorized(
+                $userId,
+                "Menu_Historial"
+            )
+        ) {
 
             $menu[] = [
                 "url" => "index.php?page=Historial_Historial",
                 "icon" => "fas fa-history",
                 "label" => "Mi Historial"
             ];
+        }
+
+
+
+        if (
+            Security::isAuthorized(
+                $userId,
+                "Menu_Favoritos"
+            )
+        ) {
 
             $menu[] = [
                 "url" => "index.php?page=Favoritos_Favoritos",
@@ -90,6 +137,7 @@ class UserMenu
             "icon" => "fas fa-sign-out-alt",
             "label" => "Cerrar Sesión"
         ];
+
 
         return $menu;
     }

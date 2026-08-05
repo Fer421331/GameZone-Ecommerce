@@ -27,6 +27,13 @@
         {{generalError}}
       </div>
       {{endif generalError}}
+      {{if sessionMessage}}
+
+      <div class="alert alert-warning">
+        {{sessionMessage}}
+      </div>
+
+      {{endif sessionMessage}}
       <div class="row right flex-end px-4">
         <button class="primary" id="btnLogin" type="submit">Iniciar Sesión</button>
       </div>

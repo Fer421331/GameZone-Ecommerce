@@ -44,6 +44,12 @@ class RolUsuario extends PrivateController
                     $_POST["rolescod"]
                 );
 
+                \Utilities\Nav::invalidateNavData();
+
+                if ($this->usercod == \Utilities\Security::getUserId()) {
+                    \Utilities\Nav::setNavContext();
+                }
+
                 Bitacora::registrar(
                     "Seguridad",
                     "Rol asignado a usuario",
@@ -63,6 +69,12 @@ class RolUsuario extends PrivateController
                     $this->usercod,
                     $_POST["rolescod"]
                 );
+
+                \Utilities\Nav::invalidateNavData();
+
+                if ($this->usercod == \Utilities\Security::getUserId()) {
+                    \Utilities\Nav::setNavContext();
+                }
 
                 Bitacora::registrar(
                     "Seguridad",
