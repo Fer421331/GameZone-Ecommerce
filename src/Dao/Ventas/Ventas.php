@@ -286,4 +286,165 @@ class Ventas extends Table
             ]
         );
     }
+
+    public static function getVentas(
+    string $buscar = "",
+    string $estado = "",
+    int $pagina = 0,
+    int $cantidad = 10
+): array {
+
+
+    $offset =
+        $pagina * $cantidad;
+
+
+
+    $sql = "
+
+    SELECT
+
+        v.venta_id,
+        v.usercod,
+        v.venta_fecha,
+        v.venta_total,
+        v.venta_estado,
+
+        mp.metodo_nombre
+
+
+    FROM ventas v
+
+
+    INNER JOIN metodos_pago mp
+        ON mp.metodo_pago_id =
+           v.metodo_pago_id
+
+
+    WHERE
+
+    (
+        v.venta_id LIKE :buscar
+        OR
+        v.usercod LIKE :buscar
+    )
+
+
+    AND
+
+    (
+        :estado = ''
+        OR
+        v.venta_estado = :estado
+    )
+
+
+    ORDER BY
+        v.venta_fecha DESC
+
+
+    LIMIT $offset,$cantidad
+
+    ";
+
+
+
+    $ventas =
+        self::obtenerRegistros(
+            $sql,
+            [
+                "buscar" =>
+                    "%" . $buscar . "%",
+
+                "estado" =>
+                    $estado
+            ]
+        );
+
+
+
+    $total =
+        self::getTotalVentas(
+            $buscar,
+            $estado
+        );
+
+
+
+    return [
+
+        "ventas" => $ventas,
+
+        "total" => $total
+
+    ];
+
+}
+
+
+
+
+
+public static function getTotalVentas(
+    string $buscar = "",
+    string $estado = ""
+): int {
+
+
+
+    $sql = "
+
+    SELECT COUNT(*) total
+
+
+    FROM ventas v
+
+
+
+    WHERE
+
+    (
+        v.venta_id LIKE :buscar
+
+        OR
+
+        v.usercod LIKE :buscar
+    )
+
+
+    AND
+
+    (
+        :estado = ''
+
+        OR
+
+        v.venta_estado = :estado
+    )
+
+    ";
+
+
+
+    $resultado =
+        self::obtenerUnRegistro(
+            $sql,
+            [
+
+                "buscar" =>
+                    "%" . $buscar . "%",
+
+                "estado" =>
+                    $estado
+
+            ]
+        );
+
+
+
+    return intval(
+        $resultado["total"] ?? 0
+    );
+
+}
 }

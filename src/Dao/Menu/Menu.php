@@ -70,6 +70,11 @@ class Menu extends Table
                 "url" => "index.php?page=Historial_Historial"
             ],
             [
+                "titulo" => "Ventas",
+                "descripcion" => "Consultar ventas realizadas",
+                "url" => "index.php?page=Ventas_Ventas"
+            ],
+            [
                 "titulo" => "Perfil",
                 "descripcion" => "Mi perfil",
                 "url" => "index.php?page=Perfil_Perfil"
