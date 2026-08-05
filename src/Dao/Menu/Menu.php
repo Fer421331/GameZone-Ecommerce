@@ -20,6 +20,16 @@ class Menu extends Table
                 "url" => "index.php?page=Categorias_Categorias"
             ],
             [
+                "titulo" => "Marcas",
+                "descripcion" => "Administrar marcas de videojuegos",
+                "url" => "index.php?page=Marcas_Marcas"
+            ],
+            [
+                "titulo" => "Plataformas",
+                "descripcion" => "Administrar plataformas",
+                "url" => "index.php?page=Plataformas_Plataformas"
+            ],
+            [
                 "titulo" => "Productos",
                 "descripcion" => "Administrar productos",
                 "url" => "index.php?page=Productos_Productos"
@@ -71,12 +81,12 @@ class Menu extends Table
 
         foreach ($roles as $rol) {
             $codigoRol = $rol["rolescod"];
-            
+
             if ($codigoRol == '1' || $codigoRol == '4') {
                 $esAdminOAuditor = true;
                 $esInvitado = false;
             }
-            
+
             if ($codigoRol == '2') {
                 $esVentas = true;
                 $esInvitado = false;

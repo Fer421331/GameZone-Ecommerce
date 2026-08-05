@@ -1,6 +1,7 @@
 <h1>{{FormTitle}}</h1>
 
-<form action="index.php?page=Productos_Producto&mode={{mode}}&producto_id={{producto_id}}" method="POST">
+<form action="index.php?page=Productos_Producto&mode={{mode}}&producto_id={{producto_id}}" method="POST"
+    enctype="multipart/form-data">
     <input type="hidden" name="producto_csrf_token" value="{{producto_csrf_token}}">
 
     <input type="hidden" name="producto_id" value="{{producto_id}}">
@@ -80,6 +81,38 @@
     <span class="error">
         {{plataforma_id_error}}
     </span>
+
+    <br><br>
+
+    <label>Imagen principal</label>
+
+    <input type="file" name="imagen" accept=".jpg,.jpeg,.png,.webp" {{disabled}}>
+
+    {{if imagenes}}
+
+    <div style="margin-top:15px; display:flex; gap:15px; flex-wrap:wrap;">
+
+        {{foreach imagenes}}
+
+        <div style="text-align:center;">
+
+            <img src="{{imagen_ruta}}" alt="" width="150">
+
+            <br>
+
+            {{if imagen_principal}}
+
+            <strong>Principal</strong>
+
+            {{endif imagen_principal}}
+
+        </div>
+
+        {{endfor imagenes}}
+
+    </div>
+
+    {{endif imagenes}}
 
     <br><br>
 

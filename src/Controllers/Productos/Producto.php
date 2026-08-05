@@ -323,6 +323,11 @@ class Producto extends PrivateController
             $message = "Producto agregado correctamente.";
 
             if ($success) {
+                $productoId = ProductosDao::getLastInsertId();
+
+                $this->guardarImagen(
+                    $productoId
+                );
                 Bitacora::registrar(
                     "Productos",
                     "Producto insertado",
@@ -349,6 +354,9 @@ class Producto extends PrivateController
             $message = "Producto actualizado correctamente.";
 
             if ($success) {
+                $this->guardarImagen(
+                    intval($this->producto["producto_id"])
+                );
                 Bitacora::registrar(
                     "Productos",
                     "Producto modificado",
@@ -422,6 +430,16 @@ class Producto extends PrivateController
         $categorias = ProductosDao::getCategoriasActivas();
         $marcas = ProductosDao::getMarcasActivas();
         $plataformas = ProductosDao::getPlataformasActivas();
+
+        $imagenes = [];
+
+        if (!empty($this->producto["producto_id"])) {
+            $imagenes = ProductosDao::getImagenesProducto(
+                intval($this->producto["producto_id"])
+            );
+        }
+
+        $this->viewData["imagenes"] = $imagenes;
 
         foreach ($categorias as &$categoria) {
             $categoria["selected"] =
@@ -540,4 +558,63 @@ class Producto extends PrivateController
             "UTF-8"
         );
     }
+
+    private function guardarImagen(
+    int $productoId
+): void {
+
+    if (
+        empty($_FILES["imagen"]["name"])
+    ) {
+        return;
+    }
+
+    if ($_FILES["imagen"]["error"] !== UPLOAD_ERR_OK) {
+        return;
+    }
+
+    $extension = strtolower(
+        pathinfo(
+            $_FILES["imagen"]["name"],
+            PATHINFO_EXTENSION
+        )
+    );
+
+    $permitidas = [
+        "jpg",
+        "jpeg",
+        "png",
+        "webp"
+    ];
+
+    if (!in_array($extension, $permitidas)) {
+        return;
+    }
+
+    $nombreArchivo =
+        uniqid("prod_")
+        . "."
+        . $extension;
+
+    $carpeta =
+        "public/imgs/productos/";
+
+    if (!is_dir($carpeta)) {
+        mkdir(
+            $carpeta,
+            0777,
+            true
+        );
+    }
+
+    move_uploaded_file(
+        $_FILES["imagen"]["tmp_name"],
+        $carpeta . $nombreArchivo
+    );
+
+    ProductosDao::guardarImagenPrincipal(
+        $productoId,
+        $carpeta . $nombreArchivo
+    );
+}
 }

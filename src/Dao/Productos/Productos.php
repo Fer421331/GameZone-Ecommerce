@@ -31,7 +31,12 @@ class Productos extends Table
         COALESCE(
             pl.plataforma_nombre,
             'Sin plataforma'
-        ) AS plataforma_nombre
+        ) AS plataforma_nombre,
+
+        COALESCE(
+            pi.imagen_ruta,
+            'public/img/no-image.png'
+        ) AS imagen_ruta
 
 
     FROM productos p
@@ -48,6 +53,10 @@ class Productos extends Table
     LEFT JOIN plataformas pl
         ON p.plataforma_id = pl.plataforma_id
 
+    LEFT JOIN producto_imagenes pi
+        ON pi.producto_id = p.producto_id
+        AND pi.imagen_principal = 1
+        AND pi.imagen_estado='ACT'
 
     ORDER BY p.producto_id DESC
 
@@ -845,5 +854,261 @@ class Productos extends Table
                 "limit" => $limit
             ]
         );
+    }
+
+    public static function getImagenesProducto(
+        int $productoId
+    ): array {
+
+        $sql = "
+            SELECT
+                imagen_id,
+                producto_id,
+                imagen_ruta,
+                imagen_principal,
+                imagen_orden,
+                imagen_estado
+            FROM producto_imagenes
+            WHERE producto_id = :producto_id
+            ORDER BY
+                imagen_principal DESC,
+                imagen_orden ASC,
+                imagen_id ASC;
+        ";
+
+        return self::obtenerRegistros(
+            $sql,
+            [
+                "producto_id" => $productoId
+            ]
+        );
+    }
+
+
+    public static function getImagenById(
+        int $imagenId
+    ): ?array {
+
+        $sql = "
+            SELECT *
+            FROM producto_imagenes
+            WHERE imagen_id = :imagen_id;
+        ";
+
+        $row = self::obtenerUnRegistro(
+            $sql,
+            [
+                "imagen_id" => $imagenId
+            ]
+        );
+
+        return $row ?: null;
+    }
+
+
+    public static function insertarImagenProducto(
+        int $productoId,
+        string $ruta,
+        int $principal = 0,
+        int $orden = 1,
+        string $estado = "ACT"
+    ): bool {
+
+        if ($principal == 1) {
+
+            self::executeNonQuery(
+                "
+                UPDATE producto_imagenes
+                SET imagen_principal = 0
+                WHERE producto_id = :producto_id;
+                ",
+                [
+                    "producto_id" => $productoId
+                ]
+            );
+        }
+
+        $sql = "
+            INSERT INTO producto_imagenes
+            (
+                producto_id,
+                imagen_ruta,
+                imagen_principal,
+                imagen_orden,
+                imagen_estado
+            )
+            VALUES
+            (
+                :producto_id,
+                :imagen_ruta,
+                :imagen_principal,
+                :imagen_orden,
+                :imagen_estado
+            );
+        ";
+
+        return self::executeNonQuery(
+            $sql,
+            [
+                "producto_id" => $productoId,
+                "imagen_ruta" => $ruta,
+                "imagen_principal" => $principal,
+                "imagen_orden" => $orden,
+                "imagen_estado" => $estado
+            ]
+        ) > 0;
+    }
+
+
+    public static function actualizarImagenProducto(
+        int $imagenId,
+        string $ruta,
+        int $principal,
+        int $orden,
+        string $estado
+    ): bool {
+
+        $imagen = self::getImagenById($imagenId);
+
+        if (!$imagen) {
+            return false;
+        }
+
+        if ($principal == 1) {
+
+            self::executeNonQuery(
+                "
+                UPDATE producto_imagenes
+                SET imagen_principal = 0
+                WHERE producto_id = :producto_id;
+                ",
+                [
+                    "producto_id" => $imagen["producto_id"]
+                ]
+            );
+        }
+
+        $sql = "
+            UPDATE producto_imagenes
+            SET
+                imagen_ruta = :imagen_ruta,
+                imagen_principal = :imagen_principal,
+                imagen_orden = :imagen_orden,
+                imagen_estado = :imagen_estado
+            WHERE imagen_id = :imagen_id;
+        ";
+
+        return self::executeNonQuery(
+            $sql,
+            [
+                "imagen_id" => $imagenId,
+                "imagen_ruta" => $ruta,
+                "imagen_principal" => $principal,
+                "imagen_orden" => $orden,
+                "imagen_estado" => $estado
+            ]
+        ) > 0;
+    }
+
+
+    public static function eliminarImagenProducto(
+        int $imagenId
+    ): bool {
+
+        $sql = "
+            DELETE
+            FROM producto_imagenes
+            WHERE imagen_id = :imagen_id;
+        ";
+
+        return self::executeNonQuery(
+            $sql,
+            [
+                "imagen_id" => $imagenId
+            ]
+        ) > 0;
+    }
+
+
+    public static function establecerImagenPrincipal(
+        int $productoId,
+        int $imagenId
+    ): bool {
+
+        self::executeNonQuery(
+            "
+            UPDATE producto_imagenes
+            SET imagen_principal = 0
+            WHERE producto_id = :producto_id;
+            ",
+            [
+                "producto_id" => $productoId
+            ]
+        );
+
+        return self::executeNonQuery(
+            "
+            UPDATE producto_imagenes
+            SET imagen_principal = 1
+            WHERE imagen_id = :imagen_id
+              AND producto_id = :producto_id;
+            ",
+            [
+                "imagen_id" => $imagenId,
+                "producto_id" => $productoId
+            ]
+        ) > 0;
+    }
+
+    public static function getLastInsertId(): int
+    {
+        $row = self::obtenerUnRegistro(
+            "SELECT LAST_INSERT_ID() id",
+            []
+        );
+
+        return intval($row["id"]);
+    }
+
+    public static function guardarImagenPrincipal(
+        int $productoId,
+        string $ruta
+    ): bool {
+
+        self::executeNonQuery(
+            "
+        UPDATE producto_imagenes
+        SET imagen_principal=0
+        WHERE producto_id=:producto_id;
+        ",
+            [
+                "producto_id" => $productoId
+            ]
+        );
+
+        return self::executeNonQuery(
+            "
+        INSERT INTO producto_imagenes
+        (
+            producto_id,
+            imagen_ruta,
+            imagen_principal,
+            imagen_orden,
+            imagen_estado
+        )
+        VALUES
+        (
+            :producto_id,
+            :imagen_ruta,
+            1,
+            1,
+            'ACT'
+        );
+        ",
+            [
+                "producto_id" => $productoId,
+                "imagen_ruta" => $ruta
+            ]
+        ) > 0;
     }
 }
