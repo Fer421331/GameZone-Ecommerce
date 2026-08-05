@@ -24,24 +24,6 @@ La plataforma permite trabajar con diferentes tipos de productos, entre ellos:
 
 Catálogo de títulos disponibles para diferentes plataformas.
 
-### 🕹️ Consolas
-
-Productos relacionados con diferentes sistemas de videojuegos.
-
-### 🎛️ Controles y accesorios
-
-Accesorios pertenecientes a plataformas como:
-
-- PlayStation
-- Xbox
-- Nintendo
-
-### 💻 Componentes
-
-También se contemplan productos y componentes electrónicos relacionados con el hardware, incluyendo diferentes elementos internos utilizados por los sistemas.
-
----
-
 ## 👤 Tipos de usuario
 
 GameZone implementa diferentes niveles de acceso dependiendo del usuario.
