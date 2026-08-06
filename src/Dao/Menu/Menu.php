@@ -114,12 +114,8 @@ class Menu extends Table
         if ($esVentas) {
             $urlsVentas = [
                 "index.php?page=Dashboard_Dashboard",
-                "index.php?page=Categorias_Categorias",
                 "index.php?page=Productos_Productos",
-                "index.php?page=Carrito_Carrito",
-                "index.php?page=Checkout_Checkout",
-                "index.php?page=Historial_Historial",
-                "index.php?page=Perfil_Perfil"
+                "index.php?page=Ventas_Ventas",
             ];
 
             return array_values(array_filter($menuCompleto, function ($item) use ($urlsVentas) {

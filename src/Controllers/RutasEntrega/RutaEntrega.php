@@ -2,13 +2,13 @@
 
 namespace Controllers\RutasEntrega;
 
-use Controllers\PublicController;
+use Controllers\PrivateController;
 use Views\Renderer;
 use Dao\RutasEntrega\RutasEntrega as RutasEntregaDao;
 use Utilities\Site;
 use Utilities\Validators;
 
-class RutaEntrega extends PublicController
+class RutaEntrega extends PrivateController
 {
     private $viewData = [];
     private $mode = "DSP";
